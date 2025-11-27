@@ -1,16 +1,57 @@
-# React + Vite
+# The Awakening (각성)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**원페이지 내러티브 로그라이트 RPG**
 
-Currently, two official plugins are available:
+> "모든 선택은 등가교환이다. 당신은 영웅이 될 것인가, 거상이 될 것인가, 아니면 재앙 그 자체가 될 것인가?"
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 📝 개요 (Overview)
 
-## React Compiler
+**The Awakening**은 단일 화면에서 진행되는 텍스트 기반 로그라이트 RPG입니다. 플레이어는 선택을 통해 캐릭터를 육성하고, 예측할 수 없는 이벤트를 겪으며, 자신의 결정에 따라 수많은 엔딩에 도달하게 됩니다.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+이 게임은 무작위 확률보다는 **내러티브적 결과**와 **선택의 책임**에 초점을 맞춥니다.
 
-## Expanding the ESLint configuration
+## ✨ 핵심 특징 (Key Features)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **확률 배제 (No Gambling)**: 모든 행동의 성공 확률은 100%입니다. 실패는 운이 없어서가 아니라, 잘못된 판단(높은 피로도, 리스크 감수)의 결과입니다.
+- **거래와 책임 (Trade-offs)**: 모든 선택은 등가교환입니다. 힘을 얻기 위해 도덕성을 희생하거나, 적을 강하게 만들 수도 있습니다.
+- **긴장감의 시각화**: 수치화된 게이지 대신, "등골이 서늘하다..."와 같은 모호한 텍스트 힌트로 위기감을 조성합니다.
+- **다양한 엔딩**: 전설적인 용사부터 거상, 또는 제4의 벽을 넘는 차원 유랑자까지 다양한 결말이 기다리고 있습니다.
+
+## ⚙️ 핵심 시스템 (Core Mechanics)
+
+### 자원 (Resources)
+- **Gold**: 거래를 위한 재화.
+- **Fatigue (피로도)**: 행동의 대가. 100에 도달하면 강제 페널티 이벤트가 발생합니다.
+- **EventCounter (히든)**: 다음 주요 이벤트까지의 진행도를 추적합니다.
+
+### 스탯 (Stats)
+- **Str/Dex/Int**: 전투 및 문제 해결 능력.
+- **Luck**: 이벤트 사이의 파밍 기회를 늘려줍니다.
+- **Intuition**: 다가올 이벤트에 대한 더 명확한 힌트를 제공합니다.
+- **Karma**: 선악 성향을 결정하며 엔딩에 영향을 미칩니다.
+
+### 각성 모드 (The Awakening - Hidden Mode)
+**위협도(Threat)**가 임계치를 넘으면 "각성" 모드에 진입하여, 세상 전체를 상대로 싸우는 보스 레이드가 시작됩니다.
+
+## 🛠️ 기술 스택 (Tech Stack)
+
+- **Frontend**: React (Vite)
+- **Styling**: Tailwind CSS
+- **State Management**: Zustand
+
+## 🚀 실행 방법 (How to Run)
+
+1.  **의존성 설치**:
+    ```bash
+    npm install
+    ```
+
+2.  **개발 서버 시작**:
+    ```bash
+    npm run dev
+    ```
+
+3.  브라우저를 열고 로컬 서버 주소(보통 `http://localhost:5173`)로 접속하세요.
+
+---
+*GDD Version 3.0 기반*
