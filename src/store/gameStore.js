@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { EVENT_THRESHOLD_MIN, EVENT_THRESHOLD_MAX } from '../constants/gameRules';
 import { EVENTS } from '../data/events';
+import { MONSTERS } from '../data/monsters';
 
 const getRandomThreshold = () =>
     Math.floor(Math.random() * (EVENT_THRESHOLD_MAX - EVENT_THRESHOLD_MIN + 1)) + EVENT_THRESHOLD_MIN;
@@ -24,6 +25,7 @@ const useGameStore = create((set, get) => ({
     },
     flags: new Set(),
     eventCounter: 0,
+    totalTurnCount: 0, // [추가] 전체 턴 수 (진행도)
     threshold: getRandomThreshold(),
     pityCounter: 0,
     phase: 'exploration', // 'exploration' | 'awakening' | 'event'
@@ -79,7 +81,10 @@ const useGameStore = create((set, get) => ({
         })),
 
     incrementEventCounter: () =>
-        set((state) => ({ eventCounter: state.eventCounter + 1 })),
+        set((state) => ({
+            eventCounter: state.eventCounter + 1,
+            totalTurnCount: state.totalTurnCount + 1 // [추가] 전체 턴 증가
+        })),
 
     resetEventCounter: () =>
         set(() => ({ eventCounter: 0, threshold: getRandomThreshold() })),
@@ -101,7 +106,26 @@ const useGameStore = create((set, get) => ({
         // Guard: 이미 이벤트 중이거나 탐색 페이즈가 아니면 실행하지 않음
         if (state.phase !== 'exploration') return;
 
-        const selectedEvent = EVENTS[Math.floor(Math.random() * EVENTS.length)];
+        // 1. 몬스터 조우 확률 (기본 30%, 턴이 지날수록 약간 증가 가능)
+        const monsterChance = 0.3;
+        let selectedEvent = null;
+
+        if (Math.random() < monsterChance) {
+            // 몬스터 풀 필터링 (현재 턴에 맞는 몬스터)
+            const availableMonsters = MONSTERS.filter(m =>
+                state.totalTurnCount >= m.minTurn && state.totalTurnCount <= m.maxTurn
+            );
+
+            if (availableMonsters.length > 0) {
+                const monster = availableMonsters[Math.floor(Math.random() * availableMonsters.length)];
+                selectedEvent = { ...monster, type: 'combat' }; // type 강제 지정
+            }
+        }
+
+        // 몬스터가 선택되지 않았으면 일반 이벤트 선택
+        if (!selectedEvent) {
+            selectedEvent = EVENTS[Math.floor(Math.random() * EVENTS.length)];
+        }
 
         set({
             phase: 'event',
@@ -138,6 +162,7 @@ const useGameStore = create((set, get) => ({
         stats: { str: 10, dex: 10, int: 10, luck: 10, intuition: 10, reputation: 0, karma: 0 },
         resources: { gold: 100, fatigue: 0, hp: 100, threat: 0, bond: 0 },
         eventCounter: 0,
+        totalTurnCount: 0,
         logs: [{ id: Date.now(), text: "새로운 모험이 시작됩니다.", type: 'system' }],
         phase: 'exploration',
         currentEvent: null
