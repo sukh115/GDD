@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+/* 커스텀 테마 설정 (v4 방식) */
+@theme {
+  --color-game-bg: #1a1a1a;
+  --color-game-panel: #2a2a2a;
+}
+
+/* 기본 스타일 */
+body {
+  background-color: var(--color-game-bg);
+  color: #e5e5e5;
+  font-family: 'Courier New', Courier, monospace;
+}

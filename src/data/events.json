@@ -1,0 +1,101 @@
+[
+    {
+        "id": "evt_explore_001",
+        "type": "move",
+        "text": "You stumble upon a hidden path overgrown with thorns.",
+        "options": [
+            {
+                "label": "Cut through (Str > 5)",
+                "action": "cut_thorns",
+                "requirements": {
+                    "stats": {
+                        "str": 5
+                    }
+                }
+            },
+            {
+                "label": "Go around",
+                "action": "go_around"
+            }
+        ],
+        "requirements": {
+            "phase": "exploration"
+        },
+        "weight": 10
+    },
+    {
+        "id": "evt_explore_002",
+        "type": "relation",
+        "text": "A wandering merchant offers you a strange potion.",
+        "options": [
+            {
+                "label": "Buy (-10 Gold)",
+                "action": "buy_potion",
+                "requirements": {
+                    "resources": {
+                        "gold": 10
+                    }
+                }
+            },
+            {
+                "label": "Ignore",
+                "action": "ignore_merchant"
+            }
+        ],
+        "requirements": {
+            "phase": "exploration"
+        },
+        "weight": 8
+    },
+    {
+        "id": "evt_combat_001",
+        "type": "combat",
+        "text": "A wild beast blocks your path!",
+        "options": [
+            {
+                "label": "Fight",
+                "action": "fight_beast"
+            },
+            {
+                "label": "Flee (Fatigue +10)",
+                "action": "flee_beast"
+            }
+        ],
+        "requirements": {
+            "phase": "exploration"
+        },
+        "weight": 5
+    },
+    {
+        "id": "evt_awakening_001",
+        "type": "relation",
+        "text": "The shadows whisper to you...",
+        "options": [
+            {
+                "label": "Listen",
+                "action": "listen_shadows"
+            },
+            {
+                "label": "Resist",
+                "action": "resist_shadows"
+            }
+        ],
+        "requirements": {
+            "phase": "awakening"
+        },
+        "weight": 10
+    },
+    {
+        "id": "evt_special_001",
+        "type": "special",
+        "text": "You find a rare artifact glowing in the dark.",
+        "options": [
+            {
+                "label": "Take it",
+                "action": "take_artifact"
+            }
+        ],
+        "requirements": {},
+        "weight": 1
+    }
+]
