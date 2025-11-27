@@ -1,13 +1,35 @@
 export const MONSTERS = [
     // Tier 1: 0 - 20 Turns (Weak)
     {
+        id: 'mon_goblin',
+        name: '고블린',
+        text: "수풀에서 고블린이 튀어나왔습니다! 조잡한 단검을 들고 있습니다.",
+        minTurn: 0,
+        maxTurn: 20,
+        options: [
+            {
+                label: "싸운다 (Str > 5)",
+                reqStats: { str: 5 },
+                cost: { fatigue: 10 },
+                reward: { gold: 5, str: 1 },
+                log: "고블린을 제압하고 전리품을 챙겼습니다."
+            },
+            {
+                label: "도망친다 (+10 Fatigue)",
+                cost: { fatigue: 10 },
+                reward: {},
+                log: "허겁지겁 도망쳤습니다. 숨이 찹니다."
+            }
+        ]
+    },
+    {
         id: 'mon_slime',
         name: '슬라임',
         text: "끈적거리는 슬라임이 길을 막고 있습니다.",
         minTurn: 0,
         maxTurn: 20,
         stats: { str: 3, hp: 20 },
-        reward: { gold: 5, exp: 5 }, // exp is placeholder for future
+        reward: { gold: 5, exp: 5 },
         options: [
             {
                 label: "밟아버린다 (Str > 3)",
@@ -60,7 +82,7 @@ export const MONSTERS = [
             {
                 label: "맞서 싸운다 (Str > 15)",
                 reqStats: { str: 15 },
-                cost: { fatigue: 20, hp: -10 }, // Take damage
+                cost: { fatigue: 20, hp: -10 },
                 reward: { gold: 20, str: 2 },
                 log: "치열한 전투 끝에 늑대들을 물리쳤습니다."
             },

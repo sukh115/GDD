@@ -26,27 +26,6 @@ export const EVENTS = [
         weight: 10
     },
     {
-        id: 'evt_goblin',
-        type: 'combat',
-        text: "수풀에서 고블린이 튀어나왔습니다! 조잡한 단검을 들고 있습니다.",
-        options: [
-            {
-                label: "싸운다 (Str > 5)",
-                reqStats: { str: 5 },
-                cost: { fatigue: 10 },
-                reward: { gold: 5, str: 1 },
-                log: "고블린을 제압하고 전리품을 챙겼습니다."
-            },
-            {
-                label: "도망친다 (+10 Fatigue)",
-                cost: { fatigue: 10 },
-                reward: {},
-                log: "허겁지겁 도망쳤습니다. 숨이 찹니다."
-            }
-        ],
-        weight: 8
-    },
-    {
         id: 'evt_shrine',
         type: 'special',
         text: "오래된 성소를 발견했습니다. 기이한 기운이 느껴집니다.",
@@ -65,5 +44,37 @@ export const EVENTS = [
             }
         ],
         weight: 5
+    },
+    {
+        id: "evt_awakening_001",
+        type: "relation",
+        text: "그림자들이 당신에게 속삭입니다...",
+        options: [
+            {
+                label: "귀기울인다.",
+                action: "listen_shadows"
+            },
+            {
+                label: "저항한다.",
+                action: "resist_shadows"
+            }
+        ],
+        requirements: {
+            phase: "awakening"
+        },
+        weight: 10
+    },
+    {
+        id: "evt_special_001",
+        type: "special",
+        text: "어둠 속에서 빛나는 희귀한 유물을 발견했습니다.",
+        options: [
+            {
+                label: "가져간다.",
+                action: "take_artifact"
+            }
+        ],
+        requirements: {},
+        weight: 1
     }
 ];

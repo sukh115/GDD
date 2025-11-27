@@ -15,14 +15,14 @@ const ActionGrid = () => {
 
                 if (!actionConfig) return null;
 
-                // Determine variant based on action type or phase
+                // 버튼 스타일 결정
                 let variant = 'default';
                 if (phase === 'awakening') {
-                    if (actionKey === 'TRAIN') variant = 'danger'; // Slaughter
-                    if (actionKey === 'EARN') variant = 'special'; // Plunder
-                    if (actionKey === 'SPECIAL') variant = 'danger'; // Extort
+                    if (actionKey === 'TRAIN') variant = 'danger'; // 학살
+                    if (actionKey === 'EARN') variant = 'special'; // 약탈
+                    if (actionKey === 'SPECIAL') variant = 'danger'; // 착취
                 } else {
-                    if (actionKey === 'SPECIAL') variant = 'secondary'; // Meditate
+                    if (actionKey === 'SPECIAL') variant = 'secondary'; // 명상
                 }
 
                 return (

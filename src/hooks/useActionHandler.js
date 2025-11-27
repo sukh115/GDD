@@ -24,24 +24,24 @@ const useActionHandler = () => {
             return;
         }
 
-        // 1. Check Costs
+        // 1. 비용 확인
         const fatigueCost = actionConfig.cost.fatigue || 0;
         const goldCost = actionConfig.cost.gold || 0;
 
-        // Check if we have enough gold (fatigue can go up, but gold usually can't go negative)
+        // 골드가 충분한지 확인 (피로도는 증가할 수 있지만, 골드는 보통 음수가 되지 않음)
         if (resources.gold < goldCost) {
             console.log('Not enough gold!');
             return; // Or trigger a UI feedback
         }
 
-        // 2. Apply Costs
+        // 2. 비용 적용
         if (fatigueCost !== 0) updateResource('fatigue', fatigueCost);
         if (goldCost !== 0) updateResource('gold', -goldCost);
 
-        // 3. Calculate & Apply Rewards
-        // Logic for "Awakening" scaling:
-        // Example: Slaughter scales with Karma (negative karma increases power?)
-        // For now, we'll implement a simple multiplier if in awakening phase and karma is involved.
+        // 3. 보상 계산 및 적용
+        // 'Awakening' 단계에서의 스케일링 로직:
+        // 예: Slaughter는 카르마에 따라 증가함 (음수 카르마가 힘을 증가시키는가?)
+        // 당분간 각성 단계이고 카르마가 관련된 경우 간단한 배율을 적용합니다.
 
         let strReward = actionConfig.reward.str || 0;
         let dexReward = actionConfig.reward.dex || 0;
@@ -53,19 +53,19 @@ const useActionHandler = () => {
 
         if (phase === 'awakening') {
             if (actionType === 'TRAIN') {
-                // Slaughter: More negative karma = more strength gain
+                // Slaughter: 카르마가 더 음수일수록 힘 증가량이 늘어납니다
                 const karmaBonus = Math.floor(Math.abs(stats.karma) * 0.5);
                 strReward += karmaBonus;
-                // Increase Threat
+                // 위협 수치 증가
                 updateResource('threat', 5);
             } else if (actionType === 'EARN') {
-                // Plunder: Increase Threat
+                // Plunder: 위협 수치 증가
                 updateResource('threat', 2);
             } else if (actionType === 'REST') {
-                // Hibernate: Increase Bond
+                // Hibernate: 유대감 증가
                 updateResource('bond', 5);
             } else if (actionType === 'SPECIAL') {
-                // Extort: Increase Threat
+                // Extort: 위협 수치 증가
                 updateResource('threat', 3);
             }
         }
@@ -78,7 +78,7 @@ const useActionHandler = () => {
         if (karmaReward !== 0) updateStat('karma', karmaReward);
         if (goldReward !== 0) updateResource('gold', goldReward);
 
-        // 4. Increment Event Counter
+        // 4. 이벤트 카운터 증가
         incrementEventCounter();
     };
 

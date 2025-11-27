@@ -11,7 +11,7 @@ export const ACTIONS = {
         awakening: {
             label: '도살',
             cost: { fatigue: 20 },
-            reward: { str: 5, dex: 2, int: 0, luck: 0, karma: -5, gold: 0 }, // Base reward, might scale
+            reward: { str: 5, dex: 2, int: 0, luck: 0, karma: -5, gold: 0 },
         },
     },
     EARN: {
@@ -29,7 +29,7 @@ export const ACTIONS = {
     REST: {
         exploration: {
             label: '휴식',
-            cost: { fatigue: -20 }, // Negative cost = recovery
+            cost: { fatigue: -20 },
             reward: { str: 0, dex: 0, int: 0, luck: 0, karma: 0, gold: 0 },
         },
         awakening: {
@@ -47,7 +47,7 @@ export const ACTIONS = {
         awakening: {
             label: '착취',
             cost: { fatigue: 15 },
-            reward: { str: 0, dex: 0, int: 0, luck: 0, karma: -10, gold: 100 }, // High gold, bad karma
+            reward: { str: 0, dex: 0, int: 0, luck: 0, karma: -10, gold: 100 },
         },
     },
 };
