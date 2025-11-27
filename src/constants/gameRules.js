@@ -4,48 +4,48 @@ export const EVENT_THRESHOLD_MAX = 30;
 export const ACTIONS = {
     TRAIN: {
         exploration: {
-            label: 'Train',
+            label: '수련',
             cost: { fatigue: 10 },
             reward: { str: 1, dex: 0, int: 0, luck: 0, karma: 0, gold: 0 },
         },
         awakening: {
-            label: 'Slaughter',
+            label: '도살',
             cost: { fatigue: 20 },
             reward: { str: 5, dex: 2, int: 0, luck: 0, karma: -5, gold: 0 }, // Base reward, might scale
         },
     },
     EARN: {
         exploration: {
-            label: 'Work',
+            label: '일',
             cost: { fatigue: 10 },
             reward: { str: 0, dex: 0, int: 0, luck: 0, karma: 0, gold: 10 },
         },
         awakening: {
-            label: 'Plunder',
+            label: '약탈',
             cost: { fatigue: 20 },
             reward: { str: 0, dex: 0, int: 0, luck: 0, karma: -5, gold: 50 },
         },
     },
     REST: {
         exploration: {
-            label: 'Rest',
+            label: '휴식',
             cost: { fatigue: -20 }, // Negative cost = recovery
             reward: { str: 0, dex: 0, int: 0, luck: 0, karma: 0, gold: 0 },
         },
         awakening: {
-            label: 'Hibernate',
+            label: '긴 휴식',
             cost: { fatigue: -50 },
             reward: { str: 0, dex: 0, int: 0, luck: 0, karma: 0, gold: 0 },
         },
     },
     SPECIAL: {
         exploration: {
-            label: 'Meditate',
+            label: '명상',
             cost: { fatigue: 5 },
             reward: { str: 0, dex: 0, int: 1, luck: 0, intuition: 1, karma: 1, gold: 0 },
         },
         awakening: {
-            label: 'Extort',
+            label: '착취',
             cost: { fatigue: 15 },
             reward: { str: 0, dex: 0, int: 0, luck: 0, karma: -10, gold: 100 }, // High gold, bad karma
         },

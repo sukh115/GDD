@@ -2,7 +2,7 @@
     {
         "id": "evt_explore_001",
         "type": "move",
-        "text": "You stumble upon a hidden path overgrown with thorns.",
+        "text": "가시덤불로 뒤덮인 숨겨진 오솔길을 우연히 발견했습니다.",
         "options": [
             {
                 "label": "Cut through (Str > 5)",
@@ -26,7 +26,7 @@
     {
         "id": "evt_explore_002",
         "type": "relation",
-        "text": "A wandering merchant offers you a strange potion.",
+        "text": "떠돌이 상인이 당신에게 기묘한 (또는 수상한) 물약을 건넵니다.",
         "options": [
             {
                 "label": "Buy (-10 Gold)",
@@ -50,7 +50,7 @@
     {
         "id": "evt_combat_001",
         "type": "combat",
-        "text": "A wild beast blocks your path!",
+        "text": "야생의 짐승이 당신의 길을 가로막습니다!",
         "options": [
             {
                 "label": "Fight",
@@ -69,7 +69,7 @@
     {
         "id": "evt_awakening_001",
         "type": "relation",
-        "text": "The shadows whisper to you...",
+        "text": "그림자들이 당신에게 속삭입니다...",
         "options": [
             {
                 "label": "Listen",
@@ -88,7 +88,7 @@
     {
         "id": "evt_special_001",
         "type": "special",
-        "text": "You find a rare artifact glowing in the dark.",
+        "text": "어둠 속에서 빛나는 희귀한 유물을 발견했습니다.",
         "options": [
             {
                 "label": "Take it",
