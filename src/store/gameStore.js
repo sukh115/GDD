@@ -34,6 +34,7 @@ const useGameStore = create((set, get) => ({
     endingData: null,
     inventory: [],
     currentEvent: null,
+    combatState: null,
     logs: [{ id: 0, text: "모험이 시작되었습니다...", type: 'system' }],
 
     addLog: (text, type = 'normal') =>
@@ -202,6 +203,123 @@ const useGameStore = create((set, get) => ({
         currentEvent: null,
         phase: 'exploration'
     })),
+
+    startCombat: (monsterId) => {
+        const monsterData = MONSTERS.find(m => m.id === monsterId);
+        if (!monsterData) return;
+
+        set({
+            phase: 'combat',
+            combatState: {
+                monster: { ...monsterData, currentHp: monsterData.stats.hp, maxHp: monsterData.stats.hp },
+                turn: 1,
+                isPlayerTurn: true,
+                logs: []
+            }
+        });
+        get().addLog(`[전투] ${monsterData.name}와(과) 전투를 시작합니다!`, 'danger');
+    },
+
+    combatAction: (actionType) => {
+        const state = get();
+        const { combatState, stats } = state;
+        if (!combatState || !combatState.isPlayerTurn) return;
+
+        const monster = combatState.monster;
+        let damage = 0;
+        let logText = "";
+
+        if (actionType === 'attack') {
+            damage = Math.max(1, stats.str - monster.stats.def);
+            if (Math.random() < stats.luck * 0.01) {
+                damage *= 2;
+                logText = `치명타! ${monster.name}에게 ${damage}의 피해를 입혔습니다!`;
+            } else {
+                logText = `${monster.name}에게 ${damage}의 피해를 입혔습니다.`;
+            }
+
+            const newMonsterHp = monster.currentHp - damage;
+
+            set(state => ({
+                combatState: {
+                    ...state.combatState,
+                    monster: { ...monster, currentHp: newMonsterHp },
+                    isPlayerTurn: false
+                }
+            }));
+            get().addLog(logText, 'normal');
+
+            if (newMonsterHp <= 0) {
+                get().endCombat(true);
+                return;
+            }
+        } else if (actionType === 'defend') {
+            get().updateResource('fatigue', -5);
+            get().addLog("방어 태세를 취하며 숨을 고릅니다. (피로도 -5)", 'normal');
+            set(state => ({
+                combatState: { ...state.combatState, isPlayerTurn: false }
+            }));
+        } else if (actionType === 'flee') {
+            const fleeChance = 0.5 + (stats.dex * 0.01);
+            if (Math.random() < fleeChance) {
+                get().addLog("무사히 도망쳤습니다!", 'system');
+                set({ phase: 'exploration', combatState: null, currentEvent: null });
+                return;
+            } else {
+                get().addLog("도망치는데 실패했습니다!", 'danger');
+                set(state => ({
+                    combatState: { ...state.combatState, isPlayerTurn: false }
+                }));
+            }
+        }
+
+        setTimeout(() => {
+            get().enemyTurn();
+        }, 1000);
+    },
+
+    enemyTurn: () => {
+        const state = get();
+        const { combatState, stats } = state;
+        if (!combatState || combatState.monster.currentHp <= 0) return;
+
+        const monster = combatState.monster;
+        let damage = Math.max(1, monster.stats.str);
+
+        const dodgeChance = stats.intuition * 0.01;
+        if (Math.random() < dodgeChance) {
+            get().addLog(`${monster.name}의 공격을 날렵하게 피했습니다!`, 'special');
+        } else {
+            get().updateResource('hp', -damage);
+            get().addLog(`${monster.name}에게 ${damage}의 피해를 입었습니다!`, 'danger');
+        }
+
+        set(state => ({
+            combatState: {
+                ...state.combatState,
+                turn: state.combatState.turn + 1,
+                isPlayerTurn: true
+            }
+        }));
+    },
+
+    endCombat: (victory) => {
+        const state = get();
+        const { combatState } = state;
+
+        if (victory) {
+            const rewardGold = combatState.monster.stats.hp;
+            get().updateResource('gold', rewardGold);
+            get().addLog(`승리했습니다! ${rewardGold} 골드를 획득했습니다.`, 'special');
+            get().updateStat('reputation', 1);
+        }
+
+        set({
+            phase: 'exploration',
+            combatState: null,
+            currentEvent: null
+        });
+    }
 }));
 
 export default useGameStore;

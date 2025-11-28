@@ -9,11 +9,10 @@ export const MONSTERS = [
         stats: { str: 7, hp: 25, def: 1 },
         options: [
             {
-                label: "싸운다 (Str > 5)",
-                reqStats: { str: 5 },
-                cost: { fatigue: 10 },
-                reward: { gold: 5, str: 1 },
-                log: "고블린을 제압하고 전리품을 챙겼습니다."
+                label: "전투 개시",
+                action: 'START_COMBAT',
+                cost: { fatigue: 5 },
+                log: "무기를 꺼내들었습니다."
             },
             {
                 label: "도망친다 (+10 Fatigue)",
@@ -33,11 +32,10 @@ export const MONSTERS = [
         reward: { gold: 5, exp: 5 },
         options: [
             {
-                label: "밟아버린다 (Str > 3)",
-                reqStats: { str: 3 },
-                cost: { fatigue: 5 },
-                reward: { gold: 5, str: 1 },
-                log: "슬라임을 밟아서 터뜨렸습니다. 신발이 더러워졌습니다."
+                label: "전투 개시",
+                action: 'START_COMBAT',
+                cost: { fatigue: 2 },
+                log: "슬라임을 향해 돌진합니다."
             },
             {
                 label: "도망친다",
@@ -56,11 +54,10 @@ export const MONSTERS = [
         stats: { str: 5, hp: 30, def: 1 },
         options: [
             {
-                label: "싸운다 (Str > 5)",
-                reqStats: { str: 5 },
-                cost: { fatigue: 10 },
-                reward: { gold: 8, dex: 1 },
-                log: "쥐를 잡았습니다. 고기는 먹을 수 없을 것 같습니다."
+                label: "전투 개시",
+                action: 'START_COMBAT',
+                cost: { fatigue: 5 },
+                log: "쥐를 잡기 위해 자세를 잡습니다."
             },
             {
                 label: "먹이를 던져준다 (-5 Gold)",
@@ -81,11 +78,10 @@ export const MONSTERS = [
         stats: { str: 15, hp: 80, def: 2 },
         options: [
             {
-                label: "맞서 싸운다 (Str > 15)",
-                reqStats: { str: 15 },
-                cost: { fatigue: 20, hp: -10 },
-                reward: { gold: 20, str: 2 },
-                log: "치열한 전투 끝에 늑대들을 물리쳤습니다."
+                label: "전투 개시",
+                action: 'START_COMBAT',
+                cost: { fatigue: 10 },
+                log: "늑대 무리와 대치합니다."
             },
             {
                 label: "나무 위로 숨는다 (Dex > 15)",
@@ -111,11 +107,10 @@ export const MONSTERS = [
                 log: "돈을 주자 산적들이 비웃으며 길을 비켜줍니다."
             },
             {
-                label: "정의구현 (Str > 20)",
-                reqStats: { str: 20 },
-                cost: { fatigue: 25 },
-                reward: { gold: 50, karma: 5, reputation: 5 },
-                log: "산적들을 소탕하고 현상금을 챙겼습니다."
+                label: "전투 개시",
+                action: 'START_COMBAT',
+                cost: { fatigue: 10 },
+                log: "산적들을 향해 검을 뽑습니다."
             }
         ]
     },
@@ -130,11 +125,10 @@ export const MONSTERS = [
         stats: { str: 40, hp: 300, def: 20 },
         options: [
             {
-                label: "부순다 (Str > 40)",
-                reqStats: { str: 40 },
-                cost: { fatigue: 40 },
-                reward: { gold: 100, str: 5 },
-                log: "골렘이 무너져 내립니다. 희귀한 광석을 얻었습니다."
+                label: "전투 개시",
+                action: 'START_COMBAT',
+                cost: { fatigue: 20 },
+                log: "거대한 골렘에게 도전합니다."
             },
             {
                 label: "약점을 노린다 (Int > 30)",
@@ -151,14 +145,13 @@ export const MONSTERS = [
         text: "검은 갑옷을 입은 기사가 길을 막습니다.",
         minTurn: 60,
         maxTurn: 9999,
-        stats: { str: 50, hp: 400, def: 30},
+        stats: { str: 50, hp: 400, def: 30 },
         options: [
             {
-                label: "결투 신청 (Str > 50)",
-                reqStats: { str: 50 },
-                cost: { fatigue: 50, hp: -30 },
-                reward: { gold: 200, reputation: 20, str: 5 },
-                log: "기사의 투구가 땅에 떨어집니다. 명예로운 승리입니다."
+                label: "전투 개시",
+                action: 'START_COMBAT',
+                cost: { fatigue: 20 },
+                log: "기사에게 결투를 신청합니다."
             },
             {
                 label: "설득한다 (Karma > 20)",

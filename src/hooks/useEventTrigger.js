@@ -41,11 +41,17 @@ const useEventTrigger = () => {
                 }
             }
         }
-                
+
         // 특수 액션 처리 (상점 열기 등)
         if (option.action === 'OPEN_SHOP') {
             useGameStore.getState().setPhase('shop'); // phase 변경
             addLog("상점 진열대를 살펴봅니다.");
+            return;
+        }
+
+        if (option.action === 'START_COMBAT') {
+            useGameStore.getState().startCombat(useGameStore.getState().currentEvent.id);
+            addLog(option.log || "전투를 시작합니다!", 'danger');
             return;
         }
 

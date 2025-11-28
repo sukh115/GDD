@@ -8,9 +8,10 @@ import useEventTrigger from './hooks/useEventTrigger';
 import EndingScreen from './components/game/EndingScreen';
 import Inventory from './components/game/Inventory';
 import ShopWindow from './components/game/ShopWindow';
+import CombatPanel from './components/game/CombatPanel';
 
 function App() {
-  const { phase, gameStatus } = useGameStore(); // gameStatus 추가
+  const { phase, gameStatus } = useGameStore();
   const { getAtmosphere } = useEventTrigger();
   const { setPhase } = useGameStore();
 
@@ -21,7 +22,6 @@ function App() {
       {gameStatus === 'ended' && <EndingScreen />}
 
       <div className="w-full max-w-md">
-        {/* ... 기존 UI 내용 유지 (Header, StatusPanel, Logs, ActionGrid 등) ... */}
         <h1 className="text-3xl font-bold text-center mb-8 tracking-widest text-gray-100 uppercase">
           The Awakening
         </h1>
@@ -39,6 +39,7 @@ function App() {
         <div className="mb-8 w-full">
           {phase === 'event' && <EventPanel />}
           {phase === 'shop' && <ShopWindow />}
+          {phase === 'combat' && <CombatPanel />}
           {(phase === 'exploration' || phase === 'awakening') && <ActionGrid />}
         </div>
       </div>
