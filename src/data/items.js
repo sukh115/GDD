@@ -6,8 +6,8 @@ export const ITEMS = {
         description: '사용 시 HP를 20 회복합니다.',
         price: 15,
         effect: {
-            hp: 20,
-            amount: 30
+            resource: 'hp',
+            amount: 20
         }
     },
     potion_fatigue: {
@@ -17,8 +17,8 @@ export const ITEMS = {
         description: '사용 시 피로도를 15 회복합니다.',
         price: 10,
         effect: {
-            fatigue: 15,
-            amount: 20
+            resource: 'fatigue',
+            amount: -15
         }
     },
     elixir_strength: {
@@ -28,8 +28,8 @@ export const ITEMS = {
         description: '사용 시 힘 스탯이 2 상승합니다.',
         price: 50,
         effect: {
-            str: 2,
-            amount: 5
+            stat: 'str',
+            amount: 2
         }
     },
     normal_sword: {
@@ -39,7 +39,7 @@ export const ITEMS = {
         description: '기본적인 공격력을 지닌 검입니다. 공격력 +5.',
         price: 100,
         effect: {
-            attack: 5,
+            stat: 'attack',
             amount: 5
         }
     },
@@ -50,8 +50,8 @@ export const ITEMS = {
         description: '희귀한 파란 보석입니다. 상점에서 높은 가격에 팔 수 있습니다.',
         price: 200,
         effect: {
-            gold: 200,
-            amount: 30
+            resource: 'gold',
+            amount: 200
         }
     }
-}
+};

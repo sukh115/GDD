@@ -27,14 +27,15 @@ function App() {
         </h1>
         <StatusPanel />
 
-      <div className='mb-4'>
-        <Inventory />
-      </div>
+        <div className='mb-4'>
+          <Inventory />
+        </div>
 
         <div className="text-center mb-4 text-gray-400 italic min-h-[1.5rem] transition-all duration-500">
           {getAtmosphere()}
         </div>
         <LogWindow />
+
         <div className="mb-8 w-full">
           {phase === 'event' && <EventPanel />}
           {phase === 'shop' && <ShopWindow />}
@@ -42,18 +43,18 @@ function App() {
         </div>
       </div>
       <div className="flex gap-2">
-          <button
-              onClick={() => setPhase('exploration')}
-              className="px-4 py-2 bg-yellow-600 rounded"
-          >
-              Set Exploration
-          </button>
-          <button
-              onClick={() => setPhase('awakening')}
-              className="px-4 py-2 bg-red-600 rounded"
-          >
-              Set Awakening
-          </button>
+        <button
+          onClick={() => setPhase('exploration')}
+          className="px-4 py-2 bg-yellow-600 rounded"
+        >
+          Set Exploration
+        </button>
+        <button
+          onClick={() => setPhase('awakening')}
+          className="px-4 py-2 bg-red-600 rounded"
+        >
+          Set Awakening
+        </button>
       </div>
       {/* <div className="bat" style={{ top: '10%', left: '10%' }}>🦇</div> */}
       {/* <div className="bat" style={{ top: '15%', right: '15%', animationDelay: '1.5s' }}>🦇</div> */}
