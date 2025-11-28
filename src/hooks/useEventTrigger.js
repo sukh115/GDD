@@ -41,6 +41,13 @@ const useEventTrigger = () => {
                 }
             }
         }
+                
+        // 특수 액션 처리 (상점 열기 등)
+        if (option.action === 'OPEN_SHOP') {
+            useGameStore.getState().setPhase('shop'); // phase 변경
+            addLog("상점 진열대를 살펴봅니다.");
+            return;
+        }
 
         // B. 비용 적용
         if (option.cost?.gold) updateResource('gold', -option.cost.gold);

@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { EVENT_THRESHOLD_MIN, EVENT_THRESHOLD_MAX } from '../constants/gameRules';
 import { EVENTS } from '../data/events';
 import { MONSTERS } from '../data/monsters';
+import { ITEMS } from '../data/items';
 
 const getRandomThreshold = () =>
     Math.floor(Math.random() * (EVENT_THRESHOLD_MAX - EVENT_THRESHOLD_MIN + 1)) + EVENT_THRESHOLD_MIN;
@@ -31,6 +32,7 @@ const useGameStore = create((set, get) => ({
     phase: 'exploration', // 'exploration' | 'awakening' | 'event'
     gameStatus: 'playing', // 'playing' | 'ended'
     endingData: null,
+    inventory: [],
 
     // [추가] 현재 발생한 이벤트 데이터
     currentEvent: null,
@@ -44,6 +46,48 @@ const useGameStore = create((set, get) => ({
             const newLogs = [...state.logs, newLog].slice(-50);
             return { logs: newLogs };
         }),
+
+    addItem: (itemId) => set((state) => {
+            const item = ITEMS[itemId];
+            if (!item) return state;
+            return { inventory: [...state.inventory, item] };
+        }),
+
+    consumeItem: (index) => set((state) => {
+        const item = state.inventory[index];
+        if (!item || item.type !== 'consumable') return state;
+
+        // 효과 적용
+        const { effect } = item;
+        if (effect.resource) {
+            get().updateResource(effect.resource, effect.amount);
+            get().addLog(`${item.name}을(를) 사용하여 ${effect.resource} 변동: ${effect.amount}`);
+        }
+        if (effect.stat) {
+            get().updateStat(effect.stat, effect.amount);
+            get().addLog(`${item.name}을(를) 사용하여 ${effect.stat} 증가!`);
+        }
+        const newInventory = [...state.inventory];
+        newInventory.splice(index, 1);
+        
+        return { inventory: newInventory };
+    }),
+
+    // 4. 아이템 구매 (골드 체크 포함)
+    buyItem: (itemId) => {
+        const state = get();
+        const item = ITEMS[itemId];
+        
+        if (state.resources.gold >= item.price) {
+            get().updateResource('gold', -item.price);
+            get().addItem(itemId);
+            get().addLog(`${item.name}을(를) 구매했습니다.`, 'system');
+            return true; // 구매 성공
+        } else {
+            get().addLog("골드가 부족합니다!", 'danger');
+            return false; // 구매 실패
+        }
+    },
 
     updateResource: (type, amount) =>
         set((state) => {

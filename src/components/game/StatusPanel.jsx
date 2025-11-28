@@ -24,22 +24,22 @@ const StatusPanel = () => {
             </div>
 
             {/* 추가된 힘(STR) 상태 표시 */}
-            <div className="flex flex-col items-center border-l border-gray-700 pl-4 ml-4">
+            <div className="flex flex-col items-center border-l border-gray-700 pl-3 ml-3">
                 <span className="text-xs text-gray-400 uppercase tracking-wider">Str</span>
                 <span className="text-lg font-bold">{stats.str}</span>
             </div>
             {/* 추가된 민첩(Dex) 상태 표시 */}
-            <div className="flex flex-col items-center border-l border-gray-700 pl-4 ml-4">
+            <div className="flex flex-col items-center border-l border-gray-700 pl-3 ml-3">
                 <span className="text-xs text-gray-400 uppercase tracking-wider">Dex</span>
                 <span className="text-lg font-bold">{stats.dex}</span>
             </div>
             {/* 추가된 지력(INT) 상태 표시 */}
-            <div className="flex flex-col items-center border-l border-gray-700 pl-4 ml-4">
+            <div className="flex flex-col items-center border-l border-gray-700 pl-3 ml-3">
                 <span className="text-xs text-gray-400 uppercase tracking-wider">INT</span>
                 <span className="text-lg font-bold">{stats.int}</span>
             </div>
             {/* 추가된 운(Luck) 상태 표시 */}
-            <div className="flex flex-col items-center border-l border-gray-700 pl-4 ml-4">
+            <div className="flex flex-col items-center border-l border-gray-700 pl-3 ml-3">
                 <span className="text-xs text-gray-400 uppercase tracking-wider">Luck</span>
                 <span className="text-lg font-bold">{stats.luck}</span>
             </div>
@@ -49,6 +49,7 @@ const StatusPanel = () => {
                 <span className="text-lg font-bold">{stats.karma}</span>
             </div> */}
         </div>
+        
     );
 };
 

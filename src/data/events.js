@@ -2,25 +2,19 @@ export const EVENTS = [
     {
         id: 'evt_merchant',
         type: 'relation',
-        text: "떠돌이 상인이 수상한 물약을 권합니다.",
+        text: "떠돌이 상인이 짐을 풀고 있습니다.",
         options: [
             {
-                label: "구매한다 (-10 Gold)",
-                cost: { gold: 10 },
-                reward: { fatigue: -20 },
-                log: "물약을 마시니 피로가 씻은 듯이 사라집니다."
+                label: "거래한다",
+                action: "OPEN_SHOP",
+                cost: {},
+                reward: {}
             },
             {
                 label: "무시한다",
                 cost: {},
                 reward: {},
-                log: "상인을 무시하고 갈 길을 갑니다."
-            },
-            {
-                label: "강탈한다 (+Karma 하락)",
-                cost: { fatigue: 5 },
-                reward: { gold: 50, karma: -10 },
-                log: "상인을 위협해 돈을 뺏었습니다. 양심이 찔립니다."
+                log: "상인을 지나쳐 갑니다."
             }
         ],
         weight: 10
@@ -71,7 +65,8 @@ export const EVENTS = [
         options: [
             {
                 label: "가져간다.",
-                action: "take_artifact"
+                action: "take_artifact",
+                reward: {blue_gem: 1}
             }
         ],
         requirements: {},

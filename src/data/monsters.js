@@ -6,6 +6,7 @@ export const MONSTERS = [
         text: "수풀에서 고블린이 튀어나왔습니다! 조잡한 단검을 들고 있습니다.",
         minTurn: 0,
         maxTurn: 20,
+        stats: { str: 7, hp: 25, def: 1 },
         options: [
             {
                 label: "싸운다 (Str > 5)",
@@ -28,7 +29,7 @@ export const MONSTERS = [
         text: "끈적거리는 슬라임이 길을 막고 있습니다.",
         minTurn: 0,
         maxTurn: 20,
-        stats: { str: 3, hp: 20 },
+        stats: { str: 3, hp: 20, def: 0 },
         reward: { gold: 5, exp: 5 },
         options: [
             {
@@ -52,7 +53,7 @@ export const MONSTERS = [
         text: "집채만한 쥐가 이빨을 드러냅니다.",
         minTurn: 0,
         maxTurn: 25,
-        stats: { str: 5, hp: 30 },
+        stats: { str: 5, hp: 30, def: 1 },
         options: [
             {
                 label: "싸운다 (Str > 5)",
@@ -77,7 +78,7 @@ export const MONSTERS = [
         text: "눈이 붉게 충혈된 늑대 무리입니다.",
         minTurn: 21,
         maxTurn: 60,
-        stats: { str: 15, hp: 80 },
+        stats: { str: 15, hp: 80, def: 2 },
         options: [
             {
                 label: "맞서 싸운다 (Str > 15)",
@@ -101,7 +102,7 @@ export const MONSTERS = [
         text: "산적들이 통행료를 요구합니다.",
         minTurn: 21,
         maxTurn: 100,
-        stats: { str: 20, hp: 100 },
+        stats: { str: 20, hp: 100, def: 5 },
         options: [
             {
                 label: "돈을 준다 (-30 Gold)",
@@ -126,7 +127,7 @@ export const MONSTERS = [
         text: "거대한 바위 덩어리가 움직입니다.",
         minTurn: 51,
         maxTurn: 9999,
-        stats: { str: 40, hp: 300 },
+        stats: { str: 40, hp: 300, def: 20 },
         options: [
             {
                 label: "부순다 (Str > 40)",
@@ -150,7 +151,7 @@ export const MONSTERS = [
         text: "검은 갑옷을 입은 기사가 길을 막습니다.",
         minTurn: 60,
         maxTurn: 9999,
-        stats: { str: 50, hp: 400 },
+        stats: { str: 50, hp: 400, def: 30},
         options: [
             {
                 label: "결투 신청 (Str > 50)",
