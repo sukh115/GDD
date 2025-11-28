@@ -2,6 +2,7 @@ export const EVENTS = [
     {
         id: 'evt_merchant',
         type: 'relation',
+        locations: ['loc_village', 'loc_castle'],
         text: "떠돌이 상인이 짐을 풀고 있습니다.",
         options: [
             {
@@ -22,6 +23,7 @@ export const EVENTS = [
     {
         id: 'evt_shrine',
         type: 'special',
+        locations: ['loc_forest', 'loc_dungeon'],
         text: "오래된 성소를 발견했습니다. 기이한 기운이 느껴집니다.",
         options: [
             {
@@ -66,7 +68,7 @@ export const EVENTS = [
             {
                 label: "가져간다.",
                 action: "take_artifact",
-                reward: {blue_gem: 1}
+                reward: { blue_gem: 1 }
             }
         ],
         requirements: {},

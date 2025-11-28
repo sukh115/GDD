@@ -6,6 +6,7 @@ export const MONSTERS = [
         text: "수풀에서 고블린이 튀어나왔습니다! 조잡한 단검을 들고 있습니다.",
         minTurn: 0,
         maxTurn: 20,
+        locations: ['loc_forest', 'loc_dungeon'],
         stats: { str: 7, hp: 25, def: 1 },
         options: [
             {
@@ -28,6 +29,7 @@ export const MONSTERS = [
         text: "끈적거리는 슬라임이 길을 막고 있습니다.",
         minTurn: 0,
         maxTurn: 20,
+        locations: ['loc_forest', 'loc_dungeon'],
         stats: { str: 3, hp: 20, def: 0 },
         reward: { gold: 5, exp: 5 },
         options: [
@@ -51,6 +53,7 @@ export const MONSTERS = [
         text: "집채만한 쥐가 이빨을 드러냅니다.",
         minTurn: 0,
         maxTurn: 25,
+        locations: ['loc_village', 'loc_dungeon'],
         stats: { str: 5, hp: 30, def: 1 },
         options: [
             {
@@ -75,6 +78,7 @@ export const MONSTERS = [
         text: "눈이 붉게 충혈된 늑대 무리입니다.",
         minTurn: 21,
         maxTurn: 60,
+        locations: ['loc_forest'],
         stats: { str: 15, hp: 80, def: 2 },
         options: [
             {
@@ -98,6 +102,7 @@ export const MONSTERS = [
         text: "산적들이 통행료를 요구합니다.",
         minTurn: 21,
         maxTurn: 100,
+        locations: ['loc_forest', 'loc_castle'],
         stats: { str: 20, hp: 100, def: 5 },
         options: [
             {
@@ -122,6 +127,7 @@ export const MONSTERS = [
         text: "거대한 바위 덩어리가 움직입니다.",
         minTurn: 51,
         maxTurn: 9999,
+        locations: ['loc_dungeon'],
         stats: { str: 40, hp: 300, def: 20 },
         options: [
             {
@@ -145,6 +151,7 @@ export const MONSTERS = [
         text: "검은 갑옷을 입은 기사가 길을 막습니다.",
         minTurn: 60,
         maxTurn: 9999,
+        locations: ['loc_castle', 'loc_dungeon'],
         stats: { str: 50, hp: 400, def: 30 },
         options: [
             {

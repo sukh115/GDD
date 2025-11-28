@@ -150,7 +150,9 @@ const useGameStore = create((set, get) => ({
 
         if (Math.random() < monsterChance) {
             const availableMonsters = MONSTERS.filter(m =>
-                state.totalTurnCount >= m.minTurn && state.totalTurnCount <= m.maxTurn
+                state.totalTurnCount >= m.minTurn &&
+                state.totalTurnCount <= m.maxTurn &&
+                (!m.locations || m.locations.includes(state.location))
             );
 
             if (availableMonsters.length > 0) {
@@ -160,7 +162,15 @@ const useGameStore = create((set, get) => ({
         }
 
         if (!selectedEvent) {
-            selectedEvent = EVENTS[Math.floor(Math.random() * EVENTS.length)];
+            const availableEvents = EVENTS.filter(e =>
+                !e.locations || e.locations.includes(state.location)
+            );
+
+            if (availableEvents.length > 0) {
+                selectedEvent = availableEvents[Math.floor(Math.random() * availableEvents.length)];
+            } else {
+                selectedEvent = EVENTS[0];
+            }
         }
 
         set({

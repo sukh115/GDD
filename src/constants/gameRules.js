@@ -50,4 +50,64 @@ export const ACTIONS = {
             reward: { str: 0, dex: 0, int: 0, luck: 0, karma: -10, gold: 100 },
         },
     },
+    EXPLORE: {
+        exploration: {
+            label: '탐험',
+            cost: { fatigue: 15 },
+            reward: { str: 0, dex: 1, int: 0, luck: 1, karma: 0, gold: 0 },
+        },
+        awakening: {
+            label: '정찰',
+            cost: { fatigue: 10 },
+            reward: { str: 0, dex: 2, int: 0, luck: 0, karma: 0, gold: 0 },
+        },
+    },
+    PRAY: {
+        exploration: {
+            label: '기도',
+            cost: { fatigue: 5 },
+            reward: { str: 0, dex: 0, int: 0, luck: 1, karma: 2, gold: 0 },
+        },
+        awakening: {
+            label: '저주',
+            cost: { fatigue: 20 },
+            reward: { str: 0, dex: 0, int: 0, luck: 0, karma: -5, gold: 0 },
+        },
+    },
+    HUNT: {
+        exploration: {
+            label: '사냥',
+            cost: { fatigue: 20 },
+            reward: { str: 1, dex: 1, int: 0, luck: 0, karma: 0, gold: 15 },
+        },
+        awakening: {
+            label: '학살',
+            cost: { fatigue: 30 },
+            reward: { str: 3, dex: 1, int: 0, luck: 0, karma: -5, gold: 30 },
+        },
+    },
+    RESEARCH: {
+        exploration: {
+            label: '연구',
+            cost: { fatigue: 10 },
+            reward: { str: 0, dex: 0, int: 2, luck: 0, karma: 0, gold: 0 },
+        },
+        awakening: {
+            label: '금기 연구',
+            cost: { fatigue: 20 },
+            reward: { str: 0, dex: 0, int: 3, luck: 0, karma: -5, gold: 0 },
+        },
+    },
+    PATROL: {
+        exploration: {
+            label: '순찰',
+            cost: { fatigue: 15 },
+            reward: { str: 0, dex: 0, int: 0, luck: 0, karma: 1, reputation: 2, gold: 5 },
+        },
+        awakening: {
+            label: '검문',
+            cost: { fatigue: 10 },
+            reward: { str: 0, dex: 0, int: 0, luck: 0, karma: -2, reputation: 0, gold: 20 },
+        },
+    },
 };
