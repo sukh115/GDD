@@ -54,7 +54,7 @@ export const ACTIONS = {
         exploration: {
             label: '탐험',
             cost: { fatigue: 15 },
-            reward: { str: 0, dex: 1, int: 0, luck: 1, karma: 0, gold: 0 },
+            reward: { str: 0, dex: 1, int: 0, luck: 0, karma: 0, gold: 0 },
         },
         awakening: {
             label: '정찰',

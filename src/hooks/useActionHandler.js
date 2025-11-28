@@ -1,20 +1,15 @@
 import useGameStore from '../store/gameStore';
 import { ACTIONS } from '../constants/gameRules';
-import useEventTrigger from './useEventTrigger';
 
 const useActionHandler = () => {
     const {
         phase,
         resources,
         stats,
-        eventCounter,
-        threshold,
         updateResource,
         updateStat,
         incrementEventCounter,
     } = useGameStore();
-
-    const { triggerEvent } = useEventTrigger();
 
     const handleAction = (actionType) => {
         const actionConfig = ACTIONS[actionType]?.[phase];

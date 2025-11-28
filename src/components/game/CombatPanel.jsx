@@ -2,7 +2,7 @@ import React from 'react';
 import useGameStore from '../../store/gameStore';
 
 const CombatPanel = () => {
-    const { combatState, stats, resources, combatAction } = useGameStore();
+    const { combatState, resources, combatAction } = useGameStore();
 
     if (!combatState) return null;
 

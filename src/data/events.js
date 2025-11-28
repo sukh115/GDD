@@ -2,7 +2,7 @@ export const EVENTS = [
     {
         id: 'evt_merchant',
         type: 'relation',
-        locations: ['loc_village', 'loc_castle'],
+        locations: ['loc_village', 'loc_forest', 'loc_dungeon'],
         text: "떠돌이 상인이 짐을 풀고 있습니다.",
         options: [
             {
@@ -44,6 +44,7 @@ export const EVENTS = [
     {
         id: "evt_awakening_001",
         type: "relation",
+        locations: ['loc_forest', 'loc_dungeon'],
         text: "그림자들이 당신에게 속삭입니다...",
         options: [
             {
