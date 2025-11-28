@@ -35,7 +35,10 @@ const useGameStore = create((set, get) => ({
     inventory: [],
     currentEvent: null,
     combatState: null,
+    location: 'loc_village',
     logs: [{ id: 0, text: "모험이 시작되었습니다...", type: 'system' }],
+
+    setLocation: (locationId) => set(() => ({ location: locationId })),
 
     addLog: (text, type = 'normal') =>
         set((state) => {

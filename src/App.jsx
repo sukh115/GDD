@@ -9,11 +9,14 @@ import EndingScreen from './components/game/EndingScreen';
 import Inventory from './components/game/Inventory';
 import ShopWindow from './components/game/ShopWindow';
 import CombatPanel from './components/game/CombatPanel';
+import { LOCATIONS } from './data/locations';
 
 function App() {
-  const { phase, gameStatus } = useGameStore();
+  const { phase, gameStatus, location } = useGameStore();
   const { getAtmosphere } = useEventTrigger();
   const { setPhase } = useGameStore();
+
+  const currentLocation = LOCATIONS[location];
 
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4 font-mono relative overflow-hidden">
@@ -22,9 +25,18 @@ function App() {
       {gameStatus === 'ended' && <EndingScreen />}
 
       <div className="w-full max-w-md">
-        <h1 className="text-3xl font-bold text-center mb-8 tracking-widest text-gray-100 uppercase">
+        <h1 className="text-3xl font-bold text-center mb-2 tracking-widest text-gray-100 uppercase">
           The Awakening
         </h1>
+
+        {/* Location Info */}
+        {currentLocation && (
+          <div className="text-center mb-6">
+            <h2 className="text-xl text-yellow-500 font-bold">📍 {currentLocation.name}</h2>
+            <p className="text-xs text-gray-500">{currentLocation.description}</p>
+          </div>
+        )}
+
         <StatusPanel />
 
         <div className='mb-4'>
