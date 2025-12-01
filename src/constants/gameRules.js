@@ -54,7 +54,7 @@ export const ACTIONS = {
         exploration: {
             label: '탐험',
             cost: { fatigue: 15 },
-            reward: { str: 0, dex: 1, int: 0, luck: 1, karma: 0, gold: 0 },
+            reward: { str: 0, dex: 1, int: 0, luck: 0, karma: 0, gold: 0 },
         },
         awakening: {
             label: '정찰',
@@ -108,6 +108,18 @@ export const ACTIONS = {
             label: '검문',
             cost: { fatigue: 10 },
             reward: { str: 0, dex: 0, int: 0, luck: 0, karma: -2, reputation: 0, gold: 20 },
+        },
+    },
+    SHOP: {
+        exploration: {
+            label: '상점',
+            cost: { fatigue: 0 },
+            reward: { str: 0, dex: 0, int: 0, luck: 0, karma: 0, gold: 0 },
+        },
+        awakening: {
+            label: '암시장',
+            cost: { fatigue: 0 },
+            reward: { str: 0, dex: 0, int: 0, luck: 0, karma: 0, gold: 0 },
         },
     },
 };

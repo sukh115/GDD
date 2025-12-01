@@ -12,11 +12,18 @@ const useActionHandler = () => {
         updateResource,
         updateStat,
         incrementEventCounter,
+        setPhase, // Add setPhase
     } = useGameStore();
 
     const { triggerEvent } = useEventTrigger();
 
     const handleAction = (actionType) => {
+        // Special handling for SHOP action
+        if (actionType === 'SHOP') {
+            setPhase('shop');
+            return;
+        }
+
         const actionConfig = ACTIONS[actionType]?.[phase];
 
         if (!actionConfig) {

@@ -3,14 +3,14 @@ export const LOCATIONS = {
         id: 'loc_village',
         name: '평화로운 마을',
         description: '모험의 시작점입니다. 안전하고 평화롭습니다.',
-        actions: ['REST', 'EARN', 'PATROL', 'PRAY'],
+        actions: ['REST', 'EARN', 'TRAIN', 'PRAY', 'SHOP'],
         connections: ['loc_forest', 'loc_castle']
     },
     'loc_forest': {
         id: 'loc_forest',
         name: '어두운 숲',
         description: '몬스터가 출몰하는 위험한 숲입니다.',
-        actions: ['EXPLORE', 'HUNT', 'TRAIN'],
+        actions: ['REST', 'EXPLORE', 'HUNT'],
         connections: ['loc_village', 'loc_dungeon']
     },
     'loc_castle': {
@@ -24,7 +24,7 @@ export const LOCATIONS = {
         id: 'loc_dungeon',
         name: '고대 던전',
         description: '강력한 마물과 보물이 잠들어 있는 곳입니다.',
-        actions: ['EXPLORE', 'HUNT', 'SPECIAL'],
+        actions: ['REST', 'EXPLORE', 'TRAIN', 'SPECIAL'],
         connections: ['loc_forest']
     }
 };

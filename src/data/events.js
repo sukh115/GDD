@@ -2,7 +2,7 @@ export const EVENTS = [
     {
         id: 'evt_merchant',
         type: 'relation',
-        locations: ['loc_village', 'loc_castle'],
+        locations: ['loc_forest', 'loc_castle', 'loc_dungeon'],
         text: "떠돌이 상인이 짐을 풀고 있습니다.",
         options: [
             {

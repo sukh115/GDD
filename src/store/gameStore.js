@@ -38,6 +38,13 @@ const useGameStore = create((set, get) => ({
     location: 'loc_village',
     logs: [{ id: 0, text: "모험이 시작되었습니다...", type: 'system' }],
 
+    equipped: {
+        weapon: null,
+        armor: null,
+        offhand: null,
+        accessory: null
+    },
+
     setLocation: (locationId) => set(() => ({ location: locationId })),
 
     addLog: (text, type = 'normal') =>
@@ -53,10 +60,82 @@ const useGameStore = create((set, get) => ({
         return { inventory: [...state.inventory, item] };
     }),
 
+    equipItem: (index) => {
+        const state = get();
+        const item = state.inventory[index];
+        if (!item || item.type !== 'equipment' || !item.slot) return;
+
+        const slot = item.slot;
+        const currentEquipped = state.equipped[slot];
+
+        // If something is already equipped, unequip it first (swap)
+        if (currentEquipped) {
+            get().unequipItem(slot, false); // false to not add to inventory immediately, we will swap
+        }
+
+        // Apply new item stats
+        if (item.effect && item.effect.stat) {
+            get().updateStat(item.effect.stat, item.effect.amount);
+        }
+
+        set((currentState) => {
+            const newInventory = [...currentState.inventory];
+            newInventory.splice(index, 1); // Remove from inventory
+
+            // If we swapped, add the old item back to inventory
+            if (currentEquipped) {
+                newInventory.push(currentEquipped);
+            }
+
+            return {
+                inventory: newInventory,
+                equipped: { ...currentState.equipped, [slot]: item }
+            };
+        });
+
+        get().addLog(`${item.name}을(를) 장착했습니다.`, 'system');
+    },
+
+    unequipItem: (slot, addToInventory = true) => {
+        const state = get();
+        const item = state.equipped[slot];
+        if (!item) return;
+
+        // Remove item stats
+        if (item.effect && item.effect.stat) {
+            get().updateStat(item.effect.stat, -item.effect.amount);
+        }
+
+        set((currentState) => {
+            const newEquipped = { ...currentState.equipped, [slot]: null };
+            let newInventory = currentState.inventory;
+
+            if (addToInventory) {
+                newInventory = [...currentState.inventory, item];
+            }
+
+            return {
+                equipped: newEquipped,
+                inventory: newInventory
+            };
+        });
+
+        if (addToInventory) {
+            get().addLog(`${item.name}을(를) 장착 해제했습니다.`, 'system');
+        }
+    },
+
     consumeItem: (index) => {
         const state = get();
         const item = state.inventory[index];
-        if (!item || item.type !== 'consumable') return;
+        if (!item) return;
+
+        if (item.type === 'equipment') {
+            get().equipItem(index);
+            return;
+        }
+
+        if (item.type !== 'consumable') return;
 
         const { effect } = item;
         if (effect.resource) {
@@ -95,7 +174,7 @@ const useGameStore = create((set, get) => ({
             const currentAmount = state.resources[type] || 0;
             let newAmount = currentAmount + amount;
 
-            if (type === 'hp') newAmount = Math.min(Math.max(0, newAmount), 100);
+            if (type === 'hp') newAmount = Math.min(Math.max(0, newAmount), 100); // MaxHP logic needed later
             if (type === 'fatigue') newAmount = Math.min(Math.max(0, newAmount), 100);
             if (type === 'gold') newAmount = Math.max(0, newAmount);
             if (type === 'threat') newAmount = Math.max(0, newAmount);
@@ -205,6 +284,7 @@ const useGameStore = create((set, get) => ({
         endingData: null,
         stats: { str: 10, dex: 10, int: 10, luck: 10, intuition: 10, reputation: 0, karma: 0 },
         resources: { gold: 100, fatigue: 0, hp: 100, threat: 0, bond: 0 },
+        equipped: { weapon: null, armor: null, offhand: null, accessory: null },
         eventCounter: 0,
         totalTurnCount: 0,
         logs: [{ id: Date.now(), text: "새로운 모험이 시작됩니다.", type: 'system' }],
@@ -243,7 +323,16 @@ const useGameStore = create((set, get) => ({
         let logText = "";
 
         if (actionType === 'attack') {
-            damage = Math.max(1, stats.str - monster.stats.def);
+            // Base damage from stats.str. If weapon adds to 'attack' stat (which is not in base stats), we need to handle it.
+            // Current items add to 'attack'. Base stats don't have 'attack'.
+            // Let's assume 'str' contributes to damage, and 'attack' from weapon is added.
+            // But wait, `updateStat` adds to `stats`. If item adds to `attack`, then `stats.attack` will exist.
+            // So we can use `stats.attack` if it exists, plus `stats.str`.
+            const attackStat = stats.attack || 0;
+            const totalAttack = stats.str + attackStat;
+
+            damage = Math.max(1, totalAttack - monster.stats.def);
+
             if (Math.random() < stats.luck * 0.01) {
                 damage *= 2;
                 logText = `치명타! ${monster.name}에게 ${damage}의 피해를 입혔습니다!`;
@@ -298,6 +387,10 @@ const useGameStore = create((set, get) => ({
 
         const monster = combatState.monster;
         let damage = Math.max(1, monster.stats.str);
+
+        // Player defense from stats.def (armor)
+        const playerDef = stats.def || 0;
+        damage = Math.max(1, damage - playerDef);
 
         const dodgeChance = stats.intuition * 0.01;
         if (Math.random() < dodgeChance) {
