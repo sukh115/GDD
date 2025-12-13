@@ -1,34 +1,33 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import useGameStore from '../../store/gameStore';
 
-const LogWindow = () => {
+function LogWindow() {
     const { logs } = useGameStore();
-    const bottomRef = useRef(null);
+    const logEndRef = useRef(null);
 
+    // 자동 스크롤
     useEffect(() => {
-        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+        logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [logs]);
 
-    const getTypeStyles = (type) => {
-        switch (type) {
-            case 'danger': return 'text-red-400 font-bold';
-            case 'special': return 'text-yellow-400 font-bold';
-            case 'system': return 'text-blue-400 italic';
-            default: return 'text-gray-300';
-        }
-    };
-
     return (
-        <div className="w-full max-w-md h-48 bg-black/50 rounded-lg p-4 overflow-y-auto mb-4 font-mono text-sm border border-gray-700 shadow-inner">
-            {logs.map((log) => (
-                <div key={log.id} className={`mb-1 ${getTypeStyles(log.type)}`}>
-                    <span className="opacity-50 mr-2">[{new Date(log.id).toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}]</span>
-                    {log.text}
-                </div>
-            ))}
-            <div ref={bottomRef} />
+        <div className="glass-card p-3 mb-4">
+            <div className="flex items-center gap-2 mb-2">
+                <span className="text-xs text-gray-500">📜 모험 기록</span>
+            </div>
+            <div className="log-window">
+                {logs.map(log => (
+                    <div
+                        key={log.id}
+                        className={`log-entry ${log.type}`}
+                    >
+                        {log.text}
+                    </div>
+                ))}
+                <div ref={logEndRef} />
+            </div>
         </div>
     );
-};
+}
 
 export default LogWindow;

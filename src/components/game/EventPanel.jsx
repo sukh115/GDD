@@ -1,35 +1,93 @@
 import React from 'react';
 import useGameStore from '../../store/gameStore';
-import useEventTrigger from '../../hooks/useEventTrigger';
-import GameButton from '../ui/GameButton';
 
-const EventPanel = () => {
-    const { currentEvent } = useGameStore();
-    const { handleEventOption } = useEventTrigger();
+function EventPanel() {
+    const { currentEvent, onEventOption, onTravel } = useGameStore();
 
     if (!currentEvent) return null;
 
-    return (
-        <div className="p-6 bg-gray-800 rounded-lg border-2 border-yellow-600 shadow-xl w-full animate-fade-in">
-            <h2 className="text-xl font-bold text-yellow-500 mb-4 uppercase tracking-wider">
-                ⚠️ Event Encounter
-            </h2>
-            <p className="text-lg text-gray-200 mb-6 min-h-[3rem]">
-                {currentEvent.text}
-            </p>
+    // 이동 선택 UI
+    if (currentEvent.type === 'travel' && currentEvent.travelChoices) {
+        const { current, destinations } = currentEvent.travelChoices;
 
-            <div className="flex flex-col gap-3">
-                {currentEvent.options.map((option, index) => (
-                    <GameButton
-                        key={index}
-                        label={option.label}
-                        variant="special"
-                        onClick={() => handleEventOption(option)}
-                    />
+        return (
+            <div className="glass-card p-4 mb-4 border-2 border-blue-500/50">
+                <div className="flex items-center gap-2 mb-3">
+                    <span className="text-xs px-2 py-1 rounded-full bg-blue-500/30 text-blue-300">
+                        🚶 이동 선택
+                    </span>
+                </div>
+
+                <p className="text-lg mb-4">{currentEvent.text}</p>
+
+                <div className="space-y-2">
+                    <button onClick={() => onTravel(null)} className="w-full action-btn text-left">
+                        <div className="font-medium">{current.theme.particle} {current.name}에 머무른다</div>
+                        <div className="text-xs text-gray-400">현재 위치</div>
+                    </button>
+
+                    {destinations.map(dest => (
+                        <button key={dest.id} onClick={() => onTravel(dest.id)} className="w-full action-btn text-left">
+                            <div className="font-medium">{dest.theme.particle} {dest.name}(으)로 이동</div>
+                            <div className="text-xs text-gray-400">{dest.description}</div>
+                            {dest.dangerLevel > 2 && <div className="text-xs text-red-400 mt-1">⚠️ 위험</div>}
+                        </button>
+                    ))}
+                </div>
+            </div>
+        );
+    }
+
+    // 이벤트 타입별 스타일
+    const styles = {
+        combat: { icon: '⚔️', name: '전투', bg: 'bg-red-500/30', text: 'text-red-300' },
+        special: { icon: '✨', name: '특수', bg: 'bg-blue-500/30', text: 'text-blue-300' },
+        fortune: { icon: '🌟', name: '기연', bg: 'bg-yellow-500/40', text: 'text-yellow-200' },
+        misfortune: { icon: '💀', name: '악연', bg: 'bg-red-500/30', text: 'text-red-300' },
+        relation: { icon: '💬', name: '인연', bg: 'bg-purple-500/30', text: 'text-purple-300' },
+    };
+    const style = styles[currentEvent.type] || styles.relation;
+
+    // 기연/악연 특수 테두리
+    const borderClass = currentEvent.type === 'fortune' ? 'border-yellow-400'
+        : currentEvent.type === 'misfortune' ? 'border-red-500/50'
+            : '';
+
+    return (
+        <div className={`glass-card p-4 mb-4 border-2 ${borderClass}`}
+            style={{ borderColor: !borderClass ? 'var(--accent-primary)' : undefined }}>
+
+            <div className="flex items-center gap-2 mb-3">
+                <span className={`text-xs px-2 py-1 rounded-full ${style.bg} ${style.text}`}>
+                    {style.icon} {style.name}
+                </span>
+            </div>
+
+            <p className="text-lg mb-4 leading-relaxed">{currentEvent.text}</p>
+
+            <div className="space-y-2">
+                {currentEvent.options?.map((option, idx) => (
+                    <button key={idx} onClick={() => onEventOption(option)} className="w-full action-btn text-left">
+                        <div className="font-medium">{option.label}</div>
+                        {option.cost && (
+                            <div className="text-xs text-red-400 mt-1">
+                                {Object.entries(option.cost).map(([r, a]) => (
+                                    <span key={r} className="mr-2">{r === 'gold' ? `💰-${a}` : `${r}-${a}`}</span>
+                                ))}
+                            </div>
+                        )}
+                        {option.reward && (
+                            <div className="text-xs text-green-400 mt-1">
+                                {Object.entries(option.reward).filter(([, a]) => a !== 0).map(([s, a]) => (
+                                    <span key={s} className="mr-2">{s}{a > 0 ? '+' : ''}{a}</span>
+                                ))}
+                            </div>
+                        )}
+                    </button>
                 ))}
             </div>
         </div>
     );
-};
+}
 
 export default EventPanel;

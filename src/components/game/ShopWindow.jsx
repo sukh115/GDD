@@ -1,48 +1,56 @@
-// src/components/game/ShopWindow.jsx
 import React from 'react';
 import useGameStore from '../../store/gameStore';
-import { ITEMS } from '../../data/items';
-import GameButton from '../ui/GameButton';
 
-const ShopWindow = () => {
-    const { buyItem, setPhase, addLog } = useGameStore();
+function ShopWindow() {
+    const { resources, _applyResource, _addLog, onCloseShop } = useGameStore();
 
-    // 상점에서 팔 목록 (나중에 랜덤화 가능)
-    const shopList = ['potion_hp', 'potion_fatigue', 'elixir_strength', 'normal_sword', 'gem_blue'];
+    const items = [
+        { id: 'potion', name: '체력 포션', price: 30, effect: { hp: 30 } },
+        { id: 'bread', name: '빵', price: 10, effect: { fatigue: -20 } },
+    ];
 
-    const handleExit = () => {
-        addLog("상점 문을 나섭니다.");
-        setPhase('exploration'); // 탐색 모드로 복귀
+    const handleBuy = (item) => {
+        if (resources.gold < item.price) {
+            _addLog('💰 골드 부족!', 'danger');
+            return;
+        }
+        _applyResource('gold', -item.price);
+        for (const [r, a] of Object.entries(item.effect)) {
+            _applyResource(r, a);
+        }
+        _addLog(`🛒 ${item.name} 구매!`, 'success');
     };
 
     return (
-        <div className="p-6 bg-gray-800 rounded-lg border-2 border-yellow-600 shadow-xl w-full animate-fade-in">
-            <h2 className="text-xl font-bold text-yellow-500 mb-2 uppercase">💰 General Store</h2>
-            <p className="text-gray-400 text-sm mb-6">"필요한 게 있으면 골라보게나. 외상은 사절일세."</p>
-
-            <div className="space-y-3 mb-6">
-                {shopList.map((itemId) => {
-                    const item = ITEMS[itemId];
-                    return (
-                        <div key={itemId} className="flex justify-between items-center bg-gray-700 p-3 rounded border border-gray-600">
-                            <div>
-                                <div className="font-bold text-white">{item.name}</div>
-                                <div className="text-xs text-gray-400">{item.desc}</div>
-                            </div>
-                            <button
-                                onClick={() => buyItem(itemId)}
-                                className="px-3 py-1 bg-yellow-700 hover:bg-yellow-600 text-white text-sm rounded font-bold transition-colors"
-                            >
-                                {item.price} G
-                            </button>
-                        </div>
-                    );
-                })}
+        <div className="glass-card p-4 mb-4 border-2 border-yellow-500/50">
+            <div className="flex items-center justify-between mb-4">
+                <span className="text-lg font-bold text-yellow-400">🛒 상점</span>
+                <div className="flex items-center gap-4">
+                    <span className="text-yellow-400">💰 {resources.gold}G</span>
+                    <button onClick={onCloseShop} className="text-sm px-3 py-1 bg-white/10 hover:bg-white/20 rounded">
+                        닫기
+                    </button>
+                </div>
             </div>
 
-            <GameButton label="나가기" onClick={handleExit} variant="default" />
+            <div className="space-y-2">
+                {items.map(item => (
+                    <div key={item.id} className="flex items-center justify-between p-3 bg-black/20 rounded-lg">
+                        <div>
+                            <div className="font-medium">{item.name}</div>
+                            <div className="text-xs text-gray-400">
+                                {Object.entries(item.effect).map(([r, a]) => `${r}${a > 0 ? '+' : ''}${a}`).join(' ')}
+                            </div>
+                        </div>
+                        <button onClick={() => handleBuy(item)} disabled={resources.gold < item.price}
+                            className={`px-4 py-2 rounded-lg font-bold ${resources.gold >= item.price ? 'bg-yellow-600 text-black' : 'bg-gray-600 text-gray-400'}`}>
+                            {item.price}G
+                        </button>
+                    </div>
+                ))}
+            </div>
         </div>
     );
-};
+}
 
 export default ShopWindow;

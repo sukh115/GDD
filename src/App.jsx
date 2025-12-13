@@ -1,77 +1,99 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import useGameStore from './store/gameStore';
+import { getLocation } from './data/locations';
 import StatusPanel from './components/game/StatusPanel';
 import ActionGrid from './components/game/ActionGrid';
 import LogWindow from './components/game/LogWindow';
-import EventPanel from './components/game/EventPanel';
-import useEventTrigger from './hooks/useEventTrigger';
+import LocationHeader from './components/game/LocationHeader';
 import EndingScreen from './components/game/EndingScreen';
-import Inventory from './components/game/Inventory';
-import ShopWindow from './components/game/ShopWindow';
+import EventPanel from './components/game/EventPanel';
 import CombatPanel from './components/game/CombatPanel';
-import { LOCATIONS } from './data/locations';
+import ShopWindow from './components/game/ShopWindow';
+import Inventory from './components/game/Inventory';
+import './index.css';
 
 function App() {
-  const { phase, gameStatus, location } = useGameStore();
-  const { getAtmosphere } = useEventTrigger();
-  const { setPhase } = useGameStore();
+  const { location, gameStatus, phase, currentEvent, combatState } = useGameStore();
+  const currentLocation = useMemo(() => getLocation(location), [location]);
 
-  const currentLocation = LOCATIONS[location];
+  const locationStyles = useMemo(() => ({
+    '--accent-primary': currentLocation.theme.accent,
+    '--accent-glow': currentLocation.theme.glass,
+    '--glass-bg': currentLocation.theme.glass,
+    '--glass-border': currentLocation.theme.glassBorder,
+  }), [currentLocation]);
+
+  const getModeText = () => {
+    switch (phase) {
+      case 'awakening': return '🌑 각성 모드';
+      case 'event': return '🎭 이벤트';
+      case 'combat': return '⚔️ 전투 중';
+      case 'shop': return '🛒 상점';
+      case 'finalBattle': return '💀 최후의 결전';
+      default: return '✨ 탐색 모드';
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4 font-mono relative overflow-hidden">
+    <div className="min-h-screen relative" style={locationStyles}>
+      <div
+        className="game-background"
+        style={{ background: currentLocation.theme.background }}
+      />
 
-      {/* 엔딩 화면 (게임 종료 시 오버레이) */}
+      <Particles particle={currentLocation.theme.particle} />
+
       {gameStatus === 'ended' && <EndingScreen />}
 
-      <div className="w-full max-w-md">
-        <h1 className="text-3xl font-bold text-center mb-2 tracking-widest text-gray-100 uppercase">
-          The Awakening
-        </h1>
+      <div className="relative z-10 min-h-screen flex flex-col items-center p-4 md:p-8">
+        <div className="w-full max-w-lg">
+          <header className="text-center mb-6">
+            <h1 className="game-title text-3xl md:text-4xl mb-2">
+              THE AWAKENING
+            </h1>
+            <p className="text-sm text-gray-400">
+              {getModeText()}
+            </p>
+          </header>
 
-        {/* Location Info */}
-        {currentLocation && (
-          <div className="text-center mb-6">
-            <h2 className="text-xl text-yellow-500 font-bold">📍 {currentLocation.name}</h2>
-            <p className="text-xs text-gray-500">{currentLocation.description}</p>
-          </div>
-        )}
-
-        <StatusPanel />
-
-        <div className='mb-4'>
+          <LocationHeader location={currentLocation} />
+          <StatusPanel />
           <Inventory />
-        </div>
+          <LogWindow />
 
-        <div className="text-center mb-4 text-gray-400 italic min-h-[1.5rem] transition-all duration-500">
-          {getAtmosphere()}
-        </div>
-        <LogWindow />
-
-        <div className="mb-8 w-full">
-          {phase === 'event' && <EventPanel />}
+          {phase === 'event' && currentEvent && <EventPanel />}
+          {phase === 'combat' && combatState && <CombatPanel />}
           {phase === 'shop' && <ShopWindow />}
-          {phase === 'combat' && <CombatPanel />}
-          {(phase === 'exploration' || phase === 'awakening') && <ActionGrid />}
+
+          {(phase === 'exploration' || phase === 'awakening') && (
+            <ActionGrid location={currentLocation} />
+          )}
         </div>
       </div>
-      <div className="flex gap-2">
-        <button
-          onClick={() => setPhase('exploration')}
-          className="px-4 py-2 bg-yellow-600 rounded"
-        >
-          Set Exploration
-        </button>
-        <button
-          onClick={() => setPhase('awakening')}
-          className="px-4 py-2 bg-red-600 rounded"
-        >
-          Set Awakening
-        </button>
-      </div>
-      {/* <div className="bat" style={{ top: '10%', left: '10%' }}>🦇</div> */}
-      {/* <div className="bat" style={{ top: '15%', right: '15%', animationDelay: '1.5s' }}>🦇</div> */}
     </div>
+  );
+}
+
+function Particles({ particle }) {
+  const particles = useMemo(() => {
+    return Array.from({ length: 5 }, (_, i) => ({
+      id: i,
+      style: {
+        left: `${10 + i * 20}%`,
+        top: `${20 + (i % 3) * 25}%`,
+        animationDelay: `${i * 1.5}s`,
+      }
+    }));
+  }, []);
+
+  return (
+    <>
+      {particles.map(p => (
+        <div key={p.id} className="particle" style={p.style}>
+          {particle}
+        </div>
+      ))}
+    </>
   );
 }
 

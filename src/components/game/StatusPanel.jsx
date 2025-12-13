@@ -1,56 +1,77 @@
 import React from 'react';
 import useGameStore from '../../store/gameStore';
 
-const StatusPanel = () => {
-    const { resources, stats } = useGameStore();
+function StatusPanel() {
+    const { stats, resources, phase } = useGameStore();
+
+    // 주요 자원 바
+    const resourceBars = [
+        { key: 'hp', label: 'HP', value: resources.hp, max: resources.maxHp, color: 'hp' },
+        { key: 'fatigue', label: '피로', value: resources.fatigue, max: 100, color: 'fatigue' },
+        { key: 'threat', label: '위협', value: resources.threat, max: 100, color: 'threat' },
+    ];
+
+    if (phase === 'awakening') {
+        resourceBars.push({ key: 'bond', label: '결속', value: resources.bond, max: 100, color: 'bond' });
+    }
 
     return (
-        <div className="flex justify-between items-center p-4 bg-gray-800 rounded-lg shadow-lg mb-4 text-white">
-            <div className="flex flex-col items-center">
-                <span className="text-xs text-gray-400 uppercase tracking-wider">HP</span>
-                <span className="text-xl font-bold text-red-500">{resources.hp}</span>
-            </div>
-
-            <div className="flex flex-col items-center">
-                <span className="text-xs text-gray-400 uppercase tracking-wider">Gold</span>
-                <span className="text-xl font-bold text-yellow-400">{resources.gold}</span>
-            </div>
-
-            <div className="flex flex-col items-center">
-                <span className="text-xs text-gray-400 uppercase tracking-wider">피로도</span>
-                <span className={`text-xl font-bold ${resources.fatigue > 80 ? 'text-red-500 animate-pulse' : 'text-blue-400'}`}>
-                    {resources.fatigue}
+        <div className="glass-card p-4 mb-4">
+            {/* 골드 표시 */}
+            <div className="flex justify-between items-center mb-4">
+                <span className="text-yellow-400 font-bold">
+                    💰 {resources.gold} Gold
+                </span>
+                <span className="text-xs text-gray-500">
+                    Karma: <span className={stats.karma >= 0 ? 'text-blue-400' : 'text-red-400'}>
+                        {stats.karma > 0 ? '+' : ''}{stats.karma}
+                    </span>
                 </span>
             </div>
 
-            {/* 추가된 힘(STR) 상태 표시 */}
-            <div className="flex flex-col items-center border-l border-gray-700 pl-3 ml-3">
-                <span className="text-xs text-gray-400 uppercase tracking-wider">Str</span>
-                <span className="text-lg font-bold">{stats.str}</span>
+            {/* 자원 바 */}
+            <div className="space-y-3 mb-4">
+                {resourceBars.map(bar => (
+                    <div key={bar.key}>
+                        <div className="flex justify-between text-xs mb-1">
+                            <span className="text-gray-400">{bar.label}</span>
+                            <span>{bar.value}/{bar.max}</span>
+                        </div>
+                        <div className="stat-bar">
+                            <div
+                                className={`stat-bar-fill ${bar.color}`}
+                                style={{ width: `${(bar.value / bar.max) * 100}%` }}
+                            />
+                        </div>
+                    </div>
+                ))}
             </div>
-            {/* 추가된 민첩(Dex) 상태 표시 */}
-            <div className="flex flex-col items-center border-l border-gray-700 pl-3 ml-3">
-                <span className="text-xs text-gray-400 uppercase tracking-wider">Dex</span>
-                <span className="text-lg font-bold">{stats.dex}</span>
+
+            {/* 스탯 그리드 */}
+            <div className="grid grid-cols-3 gap-2 text-center text-sm">
+                <StatBox label="힘" value={stats.str} icon="⚔️" />
+                <StatBox label="민첩" value={stats.dex} icon="🏃" />
+                <StatBox label="지능" value={stats.int} icon="📚" />
+                <StatBox label="행운" value={stats.luck} icon="🍀" />
+                <StatBox label="직감" value={stats.intuition} icon="👁️" />
+                <div className="p-2 bg-white/5 rounded-lg">
+                    <span className="text-xs text-gray-500">Karma</span>
+                    <div className={`font-bold ${stats.karma >= 0 ? 'text-blue-400' : 'text-red-400'}`}>
+                        {stats.karma >= 0 ? '☀️' : '🌙'} {stats.karma}
+                    </div>
+                </div>
             </div>
-            {/* 추가된 지력(INT) 상태 표시 */}
-            <div className="flex flex-col items-center border-l border-gray-700 pl-3 ml-3">
-                <span className="text-xs text-gray-400 uppercase tracking-wider">INT</span>
-                <span className="text-lg font-bold">{stats.int}</span>
-            </div>
-            {/* 추가된 운(Luck) 상태 표시 */}
-            <div className="flex flex-col items-center border-l border-gray-700 pl-3 ml-3">
-                <span className="text-xs text-gray-400 uppercase tracking-wider">Luck</span>
-                <span className="text-lg font-bold">{stats.luck}</span>
-            </div>
-            {/* 추가된 카르마(Karma) 상태 표시
-            <div className="flex flex-col items-center border-l border-gray-700 pl-4 ml-4">
-                <span className="text-xs text-gray-400 uppercase tracking-wider">Karma</span>
-                <span className="text-lg font-bold">{stats.karma}</span>
-            </div> */}
         </div>
-        
     );
-};
+}
+
+function StatBox({ label, value, icon }) {
+    return (
+        <div className="p-2 bg-white/5 rounded-lg">
+            <span className="text-xs text-gray-500">{label}</span>
+            <div className="font-bold">{icon} {value}</div>
+        </div>
+    );
+}
 
 export default StatusPanel;

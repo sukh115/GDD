@@ -1,69 +1,145 @@
-import React from 'react';
+import React, { useState } from 'react';
 import useGameStore from '../../store/gameStore';
+import { getItem } from '../../data/items';
 
-const Inventory = () => {
-    const { inventory, equipped, consumeItem, unequipItem } = useGameStore();
+function Inventory() {
+    const { inventory, equipped, resources } = useGameStore();
+    const [isOpen, setIsOpen] = useState(false);
+
+    const equipItem = (index) => {
+        const item = inventory[index];
+        if (!item || !item.slot) return;
+
+        useGameStore.setState((state) => {
+            const newInventory = [...state.inventory];
+            const oldEquipped = state.equipped[item.slot];
+
+            // 기존 장비 인벤토리로
+            if (oldEquipped) {
+                newInventory.push(oldEquipped);
+            }
+
+            // 새 아이템 장착 후 인벤토리에서 제거
+            newInventory.splice(index, 1);
+
+            return {
+                inventory: newInventory,
+                equipped: { ...state.equipped, [item.slot]: item }
+            };
+        });
+
+        useGameStore.getState().addLog(`🎽 ${item.name}을(를) 장착했습니다.`, 'system');
+    };
+
+    const useItem = (index) => {
+        const item = inventory[index];
+        if (!item || item.type !== 'consumable') return;
+
+        const { effect } = item;
+        if (effect.resource) {
+            useGameStore.getState().updateResource(effect.resource, effect.amount);
+        }
+
+        useGameStore.setState((state) => ({
+            inventory: state.inventory.filter((_, i) => i !== index)
+        }));
+
+        useGameStore.getState().addLog(`🧪 ${item.name}을(를) 사용했습니다.`, 'success');
+    };
+
+    const unequipItem = (slot) => {
+        const item = equipped[slot];
+        if (!item) return;
+
+        useGameStore.setState((state) => ({
+            inventory: [...state.inventory, item],
+            equipped: { ...state.equipped, [slot]: null }
+        }));
+
+        useGameStore.getState().addLog(`🎽 ${item.name}을(를) 해제했습니다.`, 'system');
+    };
+
+    const getSlotIcon = (slot) => {
+        switch (slot) {
+            case 'weapon': return '⚔️';
+            case 'armor': return '🛡️';
+            case 'accessory': return '💍';
+            default: return '📦';
+        }
+    };
 
     return (
-        <div className="flex flex-col gap-4">
-            {/* 장비 창 */}
-            <div className="p-4 bg-gray-800 rounded-lg border border-gray-700">
-                <h3 className="text-gray-400 text-xs uppercase mb-2">Equipped</h3>
-                <div className="grid grid-cols-4 gap-2">
-                    {['weapon', 'armor', 'offhand', 'accessory'].map((slot) => (
-                        <div
-                            key={slot}
-                            className={`group relative p-2 rounded border transition-colors cursor-pointer min-h-[60px] flex flex-col items-center justify-center ${equipped[slot] ? 'bg-gray-700 border-yellow-500' : 'bg-gray-900 border-gray-700 border-dashed'
-                                }`}
-                            onClick={() => equipped[slot] && unequipItem(slot)}
-                        >
-                            <span className="text-[10px] text-gray-500 uppercase mb-1">{slot}</span>
-                            {equipped[slot] ? (
-                                <>
-                                    <div className="text-xs text-center text-white truncate w-full">{equipped[slot].name}</div>
-                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-32 bg-black text-xs text-gray-300 p-2 rounded hidden group-hover:block z-10 pointer-events-none">
-                                        {equipped[slot].description}
-                                        <div className="text-red-400 mt-1">클릭하여 해제</div>
-                                    </div>
-                                </>
-                            ) : (
-                                <span className="text-xs text-gray-600">-</span>
-                            )}
-                        </div>
-                    ))}
-                </div>
-            </div>
+        <div className="glass-card p-3 mb-4">
+            {/* 헤더 */}
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-full flex items-center justify-between text-sm"
+            >
+                <span className="text-gray-400">🎒 인벤토리 ({inventory.length})</span>
+                <span className="text-xs text-gray-500">{isOpen ? '▲' : '▼'}</span>
+            </button>
 
-            {/* 인벤토리 창 */}
-            <div className="p-4 bg-gray-800 rounded-lg border border-gray-700">
-                <h3 className="text-gray-400 text-xs uppercase mb-2">Inventory ({inventory.length})</h3>
-                {inventory.length === 0 ? (
-                    <div className="text-gray-500 text-center text-sm py-4">
-                        가방이 비어있습니다.
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-4 gap-2">
-                        {inventory.map((item, index) => (
-                            <div
-                                key={index}
-                                className="group relative bg-gray-700 p-2 rounded border border-gray-600 hover:border-yellow-500 cursor-pointer transition-colors"
-                                onClick={() => consumeItem(index)}
-                            >
-                                <div className="text-xs text-center text-white truncate">{item.name}</div>
-
-                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-32 bg-black text-xs text-gray-300 p-2 rounded hidden group-hover:block z-10 pointer-events-none">
-                                    {item.description}
-                                    <div className="text-yellow-500 mt-1">
-                                        {item.type === 'equipment' ? '클릭하여 장착' : '클릭하여 사용'}
-                                    </div>
+            {isOpen && (
+                <div className="mt-3 space-y-3">
+                    {/* 장착 슬롯 */}
+                    <div className="grid grid-cols-3 gap-2">
+                        {['weapon', 'armor', 'accessory'].map((slot) => (
+                            <div key={slot} className="text-center">
+                                <div className="text-xs text-gray-500 mb-1">
+                                    {getSlotIcon(slot)} {slot === 'weapon' ? '무기' : slot === 'armor' ? '갑옷' : '장신구'}
                                 </div>
+                                {equipped[slot] ? (
+                                    <button
+                                        onClick={() => unequipItem(slot)}
+                                        className="w-full p-2 bg-purple-500/20 rounded text-xs hover:bg-purple-500/40"
+                                    >
+                                        {equipped[slot].name}
+                                    </button>
+                                ) : (
+                                    <div className="p-2 bg-white/5 rounded text-xs text-gray-600">
+                                        비어있음
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>
-                )}
-            </div>
+
+                    {/* 인벤토리 목록 */}
+                    {inventory.length > 0 ? (
+                        <div className="space-y-1 max-h-40 overflow-y-auto">
+                            {inventory.map((item, index) => (
+                                <div key={index} className="flex items-center justify-between p-2 bg-black/20 rounded text-sm">
+                                    <span>{item.name}</span>
+                                    <div className="flex gap-1">
+                                        {item.type === 'consumable' && (
+                                            <button
+                                                onClick={() => useItem(index)}
+                                                className="px-2 py-1 bg-green-500/30 rounded text-xs hover:bg-green-500/50"
+                                            >
+                                                사용
+                                            </button>
+                                        )}
+                                        {item.slot && (
+                                            <button
+                                                onClick={() => equipItem(index)}
+                                                className="px-2 py-1 bg-blue-500/30 rounded text-xs hover:bg-blue-500/50"
+                                            >
+                                                장착
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-center text-gray-600 text-xs py-2">
+                            아이템이 없습니다.
+                        </p>
+                    )}
+                </div>
+            )}
         </div>
     );
-};
+}
 
 export default Inventory;

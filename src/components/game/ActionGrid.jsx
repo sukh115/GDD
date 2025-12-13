@@ -1,77 +1,99 @@
 import React from 'react';
 import useGameStore from '../../store/gameStore';
-import useActionHandler from '../../hooks/useActionHandler';
 import { ACTIONS } from '../../constants/gameRules';
-import GameButton from '../ui/GameButton';
 
-import { LOCATIONS } from '../../data/locations';
+function ActionGrid({ location }) {
+    const { phase, resources, onAction, _applyResource, _applyStat, _addLog, setState } = useGameStore();
 
-const ActionGrid = () => {
-    const { phase, location, setLocation, addLog } = useGameStore();
-    const { handleAction } = useActionHandler();
+    // 현재 페이즈에 따른 액션 목록
+    const actionSet = phase === 'awakening' ? ACTIONS.awakening : ACTIONS.exploration;
 
-    // 현재 지역 정보 가져오기
-    const currentLocation = LOCATIONS[location];
+    // 현재 위치에서 가능한 액션 필터
+    const availableActions = Object.values(actionSet).filter(
+        action => action.locations.includes(location.id)
+    );
 
-    // 현재 지역에서 가능한 액션 목록 가져오기
-    const availableActions = currentLocation ? currentLocation.actions : [];
-    const availableConnections = currentLocation ? currentLocation.connections : [];
+    const handleAction = (action) => {
+        // 특수 액션 처리
+        if (action.special === 'openShop') {
+            setState({ phase: 'shop' });
+            _addLog('🛒 상점을 열었습니다.', 'system');
+            return;
+        }
+
+        // 코스트 체크
+        for (const [resource, amount] of Object.entries(action.cost)) {
+            if (resource === 'gold' && resources.gold < amount) {
+                _addLog('💰 골드가 부족합니다!', 'danger');
+                return;
+            }
+            if (resource === 'fatigue' && resources.fatigue + amount > 100) {
+                _addLog('😰 너무 피곤합니다!', 'danger');
+                return;
+            }
+        }
+
+        // 코스트 적용
+        for (const [resource, amount] of Object.entries(action.cost)) {
+            _applyResource(resource, resource === 'fatigue' ? amount : -amount);
+        }
+
+        // 리워드 적용
+        for (const [key, amount] of Object.entries(action.reward)) {
+            if (['gold', 'fatigue', 'hp', 'threat', 'bond'].includes(key)) {
+                _applyResource(key, amount);
+            } else {
+                _applyStat(key, amount);
+            }
+        }
+
+        // 로그
+        _addLog(`✨ ${action.label} 완료!`, 'success');
+
+        // 흐름: 액션 실행
+        onAction(action.id);
+    };
 
     return (
-        <div className="flex flex-col gap-4">
-            {/* Action Buttons */}
-            <div className="grid grid-cols-2 gap-4 p-4 bg-gray-800 rounded-lg shadow-lg">
-                {availableActions.map((actionKey) => {
-                    const actionConfig = ACTIONS[actionKey][phase];
-
-                    if (!actionConfig) return null;
-
-                    // 버튼 스타일 결정
-                    let variant = 'default';
-                    if (phase === 'awakening') {
-                        if (actionKey === 'TRAIN') variant = 'danger'; // 학살
-                        if (actionKey === 'EARN') variant = 'special'; // 약탈
-                        if (actionKey === 'SPECIAL') variant = 'danger'; // 착취
-                    } else {
-                        if (actionKey === 'SPECIAL') variant = 'secondary'; // 명상
-                    }
-
-                    return (
-                        <GameButton
-                            key={actionKey}
-                            label={actionConfig.label}
-                            onClick={() => handleAction(actionKey)}
-                            variant={variant}
-                        />
-                    );
-                })}
+        <div className="glass-card p-4">
+            <div className="flex items-center justify-between mb-3">
+                <span className="text-sm text-gray-400">
+                    {phase === 'awakening' ? '🌑 각성 행동' : '⚔️ 행동'}
+                </span>
             </div>
 
-            {/* Travel Buttons */}
-            {phase === 'exploration' && availableConnections.length > 0 && (
-                <div className="p-4 bg-gray-800 rounded-lg shadow-lg">
-                    <h3 className="text-gray-400 mb-2 text-sm">이동하기</h3>
-                    <div className="grid grid-cols-2 gap-2">
-                        {availableConnections.map((locId) => {
-                            const targetLoc = LOCATIONS[locId];
-                            return (
-                                <button
-                                    key={locId}
-                                    onClick={() => {
-                                        setLocation(locId);
-                                        addLog(`${targetLoc.name}(으)로 이동했습니다.`);
-                                    }}
-                                    className="p-2 bg-gray-700 hover:bg-gray-600 rounded text-sm transition-colors"
-                                >
-                                    {targetLoc.name}
-                                </button>
-                            );
-                        })}
-                    </div>
-                </div>
-            )}
+            <div className="grid grid-cols-2 gap-3">
+                {availableActions.map(action => (
+                    <ActionButton
+                        key={action.id}
+                        action={action}
+                        isAwakening={phase === 'awakening'}
+                        onClick={() => handleAction(action)}
+                    />
+                ))}
+            </div>
         </div>
     );
-};
+}
+
+function ActionButton({ action, isAwakening, onClick }) {
+    const costText = Object.entries(action.cost)
+        .map(([res, amt]) => res === 'fatigue' ? `피로+${amt}` : res === 'gold' ? `💰-${amt}` : `${res}${amt}`)
+        .join(', ');
+
+    const rewardText = Object.entries(action.reward)
+        .filter(([, amt]) => amt !== 0)
+        .map(([stat, amt]) => `${stat}${amt > 0 ? '+' : ''}${amt}`)
+        .join(' ');
+
+    return (
+        <button onClick={onClick} className={`action-btn text-left ${isAwakening ? 'awakening' : ''}`}>
+            <div className="font-bold mb-1">{action.label}</div>
+            <div className="text-xs text-gray-400 mb-2">{action.description}</div>
+            {costText && <div className="text-xs text-red-400 mb-1">{costText}</div>}
+            {rewardText && <div className="text-xs text-green-400">{rewardText}</div>}
+        </button>
+    );
+}
 
 export default ActionGrid;

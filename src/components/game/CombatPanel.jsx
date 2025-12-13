@@ -1,84 +1,57 @@
 import React from 'react';
 import useGameStore from '../../store/gameStore';
 
-const CombatPanel = () => {
-    const { combatState, stats, resources, combatAction } = useGameStore();
+function CombatPanel() {
+    const { combatState, resources, onCombatAction } = useGameStore();
 
     if (!combatState) return null;
 
-    const { monster, isPlayerTurn } = combatState;
+    const { monster, turn, isPlayerTurn } = combatState;
+    const monsterHp = (monster.currentHp / monster.hp) * 100;
+    const playerHp = (resources.hp / resources.maxHp) * 100;
 
     return (
-        <div className="w-full max-w-md bg-red-900/20 border-2 border-red-600 rounded-lg p-4 mb-4 relative overflow-hidden">
-            {/* Background Effect */}
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-red-900/50 pointer-events-none" />
+        <div className="glass-card p-4 mb-4 border-2 border-red-500/50">
+            <div className="flex items-center justify-between mb-4">
+                <span className="text-lg font-bold text-red-400">⚔️ 전투 - Turn {turn}</span>
+                <span className={`text-sm ${isPlayerTurn ? 'text-green-400' : 'text-yellow-400'}`}>
+                    {isPlayerTurn ? '당신의 차례' : '적의 차례...'}
+                </span>
+            </div>
 
-            {/* Monster Info */}
-            <div className="relative z-10 text-center mb-6">
-                <h2 className="text-2xl font-bold text-red-500 mb-2">{monster.name}</h2>
-                <div className="w-full bg-gray-700 h-4 rounded-full overflow-hidden border border-gray-600">
-                    <div
-                        className="bg-red-600 h-full transition-all duration-500"
-                        style={{ width: `${(monster.currentHp / monster.maxHp) * 100}%` }}
-                    />
+            {/* 몬스터 */}
+            <div className="bg-black/30 rounded-lg p-4 mb-4">
+                <div className="flex justify-between items-center mb-2">
+                    <span className="font-bold text-lg">{monster.name}</span>
+                    <span className="text-sm text-gray-400">{monster.currentHp}/{monster.hp}</span>
                 </div>
-                <p className="text-sm text-gray-300 mt-1">HP: {monster.currentHp} / {monster.maxHp}</p>
-                <div className="flex justify-center gap-4 mt-2 text-sm text-gray-400">
-                    <span>STR: {monster.stats.str}</span>
-                    <span>DEF: {monster.stats.def}</span>
+                <div className="h-3 bg-gray-700 rounded-full overflow-hidden">
+                    <div className="h-full bg-red-500 transition-all" style={{ width: `${monsterHp}%` }} />
                 </div>
             </div>
 
-            {/* Player Status (Brief) */}
-            <div className="relative z-10 flex justify-between items-center mb-6 px-4 py-2 bg-black/30 rounded">
-                <div className="text-green-400">HP: {resources.hp}</div>
-                <div className="text-blue-400">Fatigue: {resources.fatigue}</div>
+            {/* 플레이어 */}
+            <div className="bg-black/30 rounded-lg p-4 mb-4">
+                <div className="flex justify-between items-center mb-2">
+                    <span className="font-bold">당신</span>
+                    <span className="text-sm text-gray-400">{resources.hp}/{resources.maxHp}</span>
+                </div>
+                <div className="h-3 bg-gray-700 rounded-full overflow-hidden">
+                    <div className="h-full bg-green-500 transition-all" style={{ width: `${playerHp}%` }} />
+                </div>
             </div>
 
-            {/* Actions */}
-            <div className="relative z-10 grid grid-cols-3 gap-2">
-                <button
-                    onClick={() => combatAction('attack')}
-                    disabled={!isPlayerTurn}
-                    className={`p-3 rounded font-bold transition-all ${isPlayerTurn
-                            ? 'bg-red-600 hover:bg-red-500 text-white shadow-lg hover:shadow-red-500/50'
-                            : 'bg-gray-700 text-gray-500 cursor-not-allowed'
-                        }`}
-                >
-                    ⚔️ 공격
-                </button>
-                <button
-                    onClick={() => combatAction('defend')}
-                    disabled={!isPlayerTurn}
-                    className={`p-3 rounded font-bold transition-all ${isPlayerTurn
-                            ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg hover:shadow-blue-500/50'
-                            : 'bg-gray-700 text-gray-500 cursor-not-allowed'
-                        }`}
-                >
-                    🛡️ 방어
-                </button>
-                <button
-                    onClick={() => combatAction('flee')}
-                    disabled={!isPlayerTurn}
-                    className={`p-3 rounded font-bold transition-all ${isPlayerTurn
-                            ? 'bg-yellow-600 hover:bg-yellow-500 text-white shadow-lg hover:shadow-yellow-500/50'
-                            : 'bg-gray-700 text-gray-500 cursor-not-allowed'
-                        }`}
-                >
-                    🏃 도망
-                </button>
-            </div>
-
-            {/* Turn Indicator */}
-            <div className="relative z-10 text-center mt-4 text-sm font-bold">
-                {isPlayerTurn ? (
-                    <span className="text-green-400 animate-pulse">당신의 턴입니다!</span>
-                ) : (
-                    <span className="text-red-400">적의 턴입니다...</span>
-                )}
+            {/* 액션 */}
+            <div className="grid grid-cols-3 gap-2">
+                <button onClick={() => onCombatAction('attack')} disabled={!isPlayerTurn}
+                    className="action-btn py-3 text-center disabled:opacity-50">⚔️ 공격</button>
+                <button onClick={() => onCombatAction('defend')} disabled={!isPlayerTurn}
+                    className="action-btn py-3 text-center disabled:opacity-50">🛡️ 방어</button>
+                <button onClick={() => onCombatAction('flee')} disabled={!isPlayerTurn}
+                    className="action-btn py-3 text-center disabled:opacity-50">🏃 도주</button>
             </div>
         </div>
     );
-};
+}
 
 export default CombatPanel;
