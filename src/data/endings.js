@@ -92,8 +92,9 @@ export const AWAKENING_ENDINGS = {
         subtitle: '12-A',
         title: '세상을 멸망시킨 자',
         condition: (state) =>
-            state.phase === 'awakening' &&
-            state.flags.has('FINAL_BATTLE_WON'),
+            state.phase === 'ended' &&
+            state.flags.has('FINAL_BATTLE_WON') &&
+            state.flags.has('WORLD_DESTROYED'),
         description: '당신은 모든 것을 끝냈습니다. 남은 것은 오직 공허뿐.',
         priority: 200,
     },
@@ -101,12 +102,12 @@ export const AWAKENING_ENDINGS = {
         id: 'observer',
         name: '관조자',
         subtitle: '12-B',
-        title: '세상을 방치한 자',
+        title: '다음 세대를 기다리는 자',
         condition: (state) =>
-            state.phase === 'awakening' &&
+            state.phase === 'ended' &&
             state.flags.has('FINAL_BATTLE_WON') &&
-            state.flags.has('SPARED_WORLD'),
-        description: '당신은 세상을 장난감처럼 두고 떠났습니다.',
+            state.flags.has('WAITING_NEXT_GENERATION'),
+        description: '더 강해진 용사와 마왕이 나타날 때까지... 당신은 깊은 잠에 빠집니다.',
         priority: 195,
     },
     fleeting_peace: {

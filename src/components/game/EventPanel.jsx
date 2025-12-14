@@ -38,6 +38,38 @@ function EventPanel() {
         );
     }
 
+    // 최종 선택 UI (각성 모드 엔딩)
+    if (currentEvent.type === 'finalChoice') {
+        return (
+            <div className="glass-card p-6 mb-4 border-2 border-purple-500 bg-gradient-to-b from-black/80 to-purple-900/30">
+                <div className="text-center mb-6">
+                    <span className="text-4xl">⚡</span>
+                    <h2 className="text-xl font-bold text-purple-300 mt-2">최후의 선택</h2>
+                </div>
+
+                <p className="text-lg mb-6 text-center leading-relaxed text-gray-200">
+                    {currentEvent.text}
+                </p>
+
+                <div className="space-y-3">
+                    {currentEvent.options?.map((option, idx) => (
+                        <button
+                            key={idx}
+                            onClick={() => onEventOption(option)}
+                            className={`w-full p-4 rounded-lg text-left transition-all border ${option.id === 'destroy'
+                                    ? 'bg-red-900/50 border-red-600 hover:bg-red-800/50'
+                                    : 'bg-blue-900/50 border-blue-600 hover:bg-blue-800/50'
+                                }`}
+                        >
+                            <div className="font-bold text-lg mb-1">{option.label}</div>
+                            <div className="text-sm text-gray-300">{option.description}</div>
+                        </button>
+                    ))}
+                </div>
+            </div>
+        );
+    }
+
     // 이벤트 타입별 스타일
     const styles = {
         combat: { icon: '⚔️', name: '전투', bg: 'bg-red-500/30', text: 'text-red-300' },

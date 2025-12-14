@@ -68,6 +68,19 @@ const useGameStore = create((set, get) => ({
     // === 흐름 3: 이벤트 선택 ===
     onEventOption: (option) => {
         const state = get();
+
+        // 최종 선택 처리
+        if (state.currentEvent?.type === 'finalChoice') {
+            if (option.id === 'destroy') {
+                get()._addFlag('WORLD_DESTROYED');
+                get().onTriggerEnding('void_king');
+            } else if (option.id === 'wait') {
+                get()._addFlag('WAITING_NEXT_GENERATION');
+                get().onTriggerEnding('observer');
+            }
+            return;
+        }
+
         if (state.currentEvent?.misfortuneEffect) {
             state.currentEvent.misfortuneEffect(get());
         }
@@ -150,6 +163,37 @@ const useGameStore = create((set, get) => ({
     // === 흐름 9: 전투 종료 ===
     _flowEndCombat: (victory) => {
         const state = get();
+
+        // 최종 보스 승리 시 특별 처리
+        if (victory && state.combatState?.monster?.isFinalBoss) {
+            get()._addLog('⚡ 용사와 마왕의 연합을 물리쳤습니다!', 'special');
+            get()._addFlag('FINAL_BATTLE_WON');
+            set({ combatState: null });
+
+            // 최종 선택 이벤트 표시
+            set({
+                phase: 'event',
+                currentEvent: {
+                    type: 'finalChoice',
+                    text: '세상의 마지막 저항이 사라졌습니다. 이제 당신 앞에는 두 가지 길이 있습니다...',
+                    options: [
+                        {
+                            id: 'destroy',
+                            label: '🔥 세상을 멸망시킨다',
+                            description: '모든 것을 끝낸다. 남은 것은 오직 공허뿐.',
+                        },
+                        {
+                            id: 'wait',
+                            label: '⏳ 다음 세대를 기다린다',
+                            description: '더 강해진 용사와 마왕이 나타날 때까지 잠든다.',
+                        },
+                    ],
+                },
+            });
+            return;
+        }
+
+        // 일반 전투 승리
         if (victory && state.combatState?.monster?.reward) {
             get()._applyResource('gold', state.combatState.monster.reward.gold || 0);
             get()._addLog('🏆 승리!', 'special');
@@ -180,7 +224,11 @@ const useGameStore = create((set, get) => ({
     },
 
     // === 흐름 13: 재시작 ===
-    onRestart: () => set({ ...INITIAL_STATE, flags: new Set(), logs: [{ id: 0, text: '새로운 모험이 시작됩니다...', type: 'system' }] }),
+    onRestart: () => set({
+        ...INITIAL_STATE,
+        flags: new Set(),
+        logs: [{ id: 0, text: '새로운 모험이 시작됩니다...', type: 'system' }]
+    }),
 
     // === 내부 헬퍼 ===
     _applyResource: (resource, amount) => {

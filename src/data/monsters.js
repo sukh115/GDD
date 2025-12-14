@@ -441,6 +441,29 @@ export const MONSTERS = {
         reward: { gold: 0, exp: 0 },
         skills: ['성스러운 일격', '빛의 보호막', '희망의 외침'],
     },
+
+    // ========================================
+    // 최종 결전: 용사 + 마왕 연합
+    // ========================================
+    hero_demon_alliance: {
+        id: 'hero_demon_alliance',
+        name: '용사와 마왕의 연합',
+        description: '인류와 마족이 손을 잡고 당신에게 대항합니다.',
+        hp: 800,
+        attack: 60,
+        defense: 35,
+        locations: ['demon_castle'],
+        minTurn: 0,
+        isBoss: true,
+        isFinalBoss: true,
+        isAwakeningEnemy: true,
+        reward: { gold: 0, exp: 0 },
+        skills: ['빛과 어둠의 융합', '희망과 절망', '세계의 의지'],
+        phases: [
+            { hpThreshold: 0.7, message: '"우리가 힘을 합치면...!"' },
+            { hpThreshold: 0.3, message: '"아직... 포기할 수 없다!"' },
+        ],
+    },
 };
 
 // === 헬퍼 함수 ===

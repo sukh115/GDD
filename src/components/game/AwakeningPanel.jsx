@@ -60,8 +60,9 @@ function AwakeningPanel() {
         // 특수 처리
         if (action.special === 'startFinalBattle') {
             _addLog('⚡ 최후의 결전이 시작됩니다!', 'danger');
+            _addLog('용사와 마왕이 손을 잡고 당신에게 대항합니다!', 'danger');
             _addFlag('FINAL_BATTLE_STARTED');
-            _flowStartCombat('hero');
+            _flowStartCombat('hero_demon_alliance');
             return;
         }
 
@@ -122,8 +123,8 @@ function AwakeningPanel() {
                             onClick={() => handleTravel(loc.id)}
                             disabled={loc.id === location}
                             className={`px-2 py-1 text-xs rounded ${loc.id === location
-                                    ? 'bg-red-700 text-white'
-                                    : 'bg-black/30 text-gray-400 hover:bg-red-900/50 hover:text-red-300'
+                                ? 'bg-red-700 text-white'
+                                : 'bg-black/30 text-gray-400 hover:bg-red-900/50 hover:text-red-300'
                                 }`}
                         >
                             {loc.name}
@@ -175,8 +176,8 @@ function AwakeningPanel() {
                     onClick={() => handleAwakeningAction(AWAKENING_ACTIONS.FINAL_BATTLE)}
                     disabled={!canFinalBattle}
                     className={`w-full p-4 rounded-lg font-bold text-lg transition-all ${canFinalBattle
-                            ? 'bg-gradient-to-r from-purple-600 to-red-600 hover:from-purple-500 hover:to-red-500 text-white animate-pulse'
-                            : 'bg-gray-800 text-gray-500 cursor-not-allowed'
+                        ? 'bg-gradient-to-r from-purple-600 to-red-600 hover:from-purple-500 hover:to-red-500 text-white animate-pulse'
+                        : 'bg-gray-800 text-gray-500 cursor-not-allowed'
                         }`}
                 >
                     ⚡ 최후의 결전
