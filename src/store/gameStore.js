@@ -58,7 +58,6 @@ const useGameStore = create((set, get) => ({
             threshold: EventLogic.getNewThreshold(state.stats.luck),
         });
         get()._addLog(`🎭 ${event.text}`, 'special');
-        // 기연 발생 시 pityCounter 리셋
         if (event.type === 'fortune') {
             set({ pityCounter: 0 });
         } else {
@@ -85,9 +84,9 @@ const useGameStore = create((set, get) => ({
     // === 흐름 4: 이동 선택지 표시 ===
     _flowShowTravel: () => {
         const state = get();
-        // 상태 전달로 접근 조건 체크
         const choices = TravelLogic.getChoices(state.location, state);
         set({
+            phase: 'event',
             currentEvent: {
                 type: 'travel',
                 text: '어디로 갈까요?',
@@ -181,7 +180,7 @@ const useGameStore = create((set, get) => ({
     },
 
     // === 흐름 13: 재시작 ===
-    onRestart: () => set({ ...INITIAL_STATE }),
+    onRestart: () => set({ ...INITIAL_STATE, flags: new Set(), logs: [{ id: 0, text: '새로운 모험이 시작됩니다...', type: 'system' }] }),
 
     // === 내부 헬퍼 ===
     _applyResource: (resource, amount) => {
@@ -204,6 +203,10 @@ const useGameStore = create((set, get) => ({
     _addLog: (text, type = 'normal') => set((s) => ({
         logs: [...s.logs, { id: Date.now(), text, type }].slice(-30)
     })),
+
+    // === 유틸리티 ===
+    setState: (newState) => set(newState),
+    getState: () => get(),
 }));
 
 export default useGameStore;

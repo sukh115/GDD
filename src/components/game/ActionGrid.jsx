@@ -1,17 +1,15 @@
 import React from 'react';
 import useGameStore from '../../store/gameStore';
-import { ACTIONS } from '../../constants/gameRules';
+import { getActionsForLocation, ACTIONS } from '../../data/actions';
 
 function ActionGrid({ location }) {
     const { phase, resources, onAction, _applyResource, _applyStat, _addLog, setState } = useGameStore();
 
-    // 현재 페이즈에 따른 액션 목록
-    const actionSet = phase === 'awakening' ? ACTIONS.awakening : ACTIONS.exploration;
-
-    // 현재 위치에서 가능한 액션 필터
-    const availableActions = Object.values(actionSet).filter(
-        action => action.locations.includes(location.id)
-    );
+    // 현재 페이즈에 따른 액션 가져오기
+    const locationActions = location.actions || [];
+    const availableActions = phase === 'awakening'
+        ? Object.values(ACTIONS.awakening)
+        : getActionsForLocation(locationActions, 'exploration');
 
     const handleAction = (action) => {
         // 특수 액션 처리
@@ -48,7 +46,7 @@ function ActionGrid({ location }) {
         }
 
         // 로그
-        _addLog(`✨ ${action.label} 완료!`, 'success');
+        _addLog(`${action.icon || '✨'} ${action.label} 완료!`, 'success');
 
         // 흐름: 액션 실행
         onAction(action.id);
@@ -88,7 +86,7 @@ function ActionButton({ action, isAwakening, onClick }) {
 
     return (
         <button onClick={onClick} className={`action-btn text-left ${isAwakening ? 'awakening' : ''}`}>
-            <div className="font-bold mb-1">{action.label}</div>
+            <div className="font-bold mb-1">{action.icon} {action.label}</div>
             <div className="text-xs text-gray-400 mb-2">{action.description}</div>
             {costText && <div className="text-xs text-red-400 mb-1">{costText}</div>}
             {rewardText && <div className="text-xs text-green-400">{rewardText}</div>}

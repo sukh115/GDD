@@ -1,24 +1,53 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import useGameStore from '../../store/gameStore';
+import { generateShopItems, buyItem } from '../../logic/ShopLogic';
+import { getLocation } from '../../data/locations';
 
 function ShopWindow() {
-    const { resources, _applyResource, _addLog, onCloseShop } = useGameStore();
+    const { resources, location, _applyResource, _addLog, onCloseShop, inventory, setState } = useGameStore();
+    const [shopItems, setShopItems] = useState([]);
 
-    const items = [
-        { id: 'potion', name: '체력 포션', price: 30, effect: { hp: 30 } },
-        { id: 'bread', name: '빵', price: 10, effect: { fatigue: -20 } },
-    ];
+    // 상점 아이템 동적 생성
+    useEffect(() => {
+        const loc = getLocation(location);
+        const items = generateShopItems(loc.dangerLevel, 8);
+        setShopItems(items);
+    }, [location]);
 
     const handleBuy = (item) => {
-        if (resources.gold < item.price) {
-            _addLog('💰 골드 부족!', 'danger');
+        const result = buyItem(item.id, { resources });
+
+        if (!result.success) {
+            _addLog(`❌ ${result.message}`, 'danger');
             return;
         }
+
         _applyResource('gold', -item.price);
-        for (const [r, a] of Object.entries(item.effect)) {
-            _applyResource(r, a);
+
+        // 소모품은 바로 사용, 장비는 인벤토리에
+        if (item.type === 'consumable' && item.effect) {
+            for (const [r, a] of Object.entries(item.effect)) {
+                if (['gold', 'fatigue', 'hp', 'threat', 'bond'].includes(r)) {
+                    _applyResource(r, a);
+                }
+            }
+            _addLog(`🛒 ${item.name} 사용!`, 'success');
+        } else {
+            // 장비류는 인벤토리에 추가
+            setState({ inventory: [...(inventory || []), { id: item.id, quantity: 1 }] });
+            _addLog(`🛒 ${item.name} 구매!`, 'success');
         }
-        _addLog(`🛒 ${item.name} 구매!`, 'success');
+    };
+
+    // 아이템 타입별 아이콘
+    const getTypeIcon = (type) => {
+        switch (type) {
+            case 'weapon': return '⚔️';
+            case 'armor': return '🛡️';
+            case 'accessory': return '💍';
+            case 'consumable': return '🧪';
+            default: return '📦';
+        }
     };
 
     return (
@@ -33,22 +62,42 @@ function ShopWindow() {
                 </div>
             </div>
 
-            <div className="space-y-2">
-                {items.map(item => (
-                    <div key={item.id} className="flex items-center justify-between p-3 bg-black/20 rounded-lg">
-                        <div>
-                            <div className="font-medium">{item.name}</div>
-                            <div className="text-xs text-gray-400">
-                                {Object.entries(item.effect).map(([r, a]) => `${r}${a > 0 ? '+' : ''}${a}`).join(' ')}
-                            </div>
+            <div className="grid grid-cols-2 gap-2 max-h-80 overflow-y-auto">
+                {shopItems.map((item, idx) => (
+                    <div key={`${item.id}-${idx}`} className="flex flex-col p-3 bg-black/20 rounded-lg">
+                        <div className="flex items-center gap-2 mb-2">
+                            <span>{getTypeIcon(item.type)}</span>
+                            <span className="font-medium text-sm">{item.name}</span>
                         </div>
-                        <button onClick={() => handleBuy(item)} disabled={resources.gold < item.price}
-                            className={`px-4 py-2 rounded-lg font-bold ${resources.gold >= item.price ? 'bg-yellow-600 text-black' : 'bg-gray-600 text-gray-400'}`}>
+                        <div className="text-xs text-gray-400 mb-2 flex-grow">
+                            {item.stats && Object.entries(item.stats).map(([s, v]) =>
+                                `${s}${v > 0 ? '+' : ''}${v}`
+                            ).join(' ')}
+                            {item.effect && Object.entries(item.effect).filter(([k]) =>
+                                ['hp', 'fatigue'].includes(k)
+                            ).map(([r, a]) =>
+                                `${r}${a > 0 ? '+' : ''}${a}`
+                            ).join(' ')}
+                        </div>
+                        <button
+                            onClick={() => handleBuy(item)}
+                            disabled={resources.gold < item.price}
+                            className={`w-full py-1 rounded text-sm font-bold ${resources.gold >= item.price
+                                    ? 'bg-yellow-600 text-black hover:bg-yellow-500'
+                                    : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                                }`}
+                        >
                             {item.price}G
                         </button>
                     </div>
                 ))}
             </div>
+
+            {shopItems.length === 0 && (
+                <div className="text-center text-gray-400 py-8">
+                    판매할 물건이 없습니다.
+                </div>
+            )}
         </div>
     );
 }

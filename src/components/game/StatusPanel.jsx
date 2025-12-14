@@ -61,6 +61,18 @@ function StatusPanel() {
                     </div>
                 </div>
             </div>
+
+            {/* DEV: 테스트 버튼 */}
+            {import.meta.env.DEV && phase === 'exploration' && (
+                <div className="mt-3 pt-3 border-t border-white/10">
+                    <button
+                        onClick={() => useGameStore.getState()._flowEnterAwakening()}
+                        className="w-full py-2 bg-red-900/50 hover:bg-red-800/50 rounded text-xs text-red-300"
+                    >
+                        🧪 DEV: 각성 모드 진입
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

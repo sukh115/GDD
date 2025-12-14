@@ -10,6 +10,8 @@ import EventPanel from './components/game/EventPanel';
 import CombatPanel from './components/game/CombatPanel';
 import ShopWindow from './components/game/ShopWindow';
 import Inventory from './components/game/Inventory';
+import AwakeningPanel from './components/game/AwakeningPanel';
+import SaveLoadMenu from './components/game/SaveLoadMenu';
 import './index.css';
 
 function App() {
@@ -34,24 +36,31 @@ function App() {
     }
   };
 
+  const bgStyle = phase === 'awakening'
+    ? 'linear-gradient(135deg, #1a0a0a 0%, #2d0a0a 50%, #1a0a0a 100%)'
+    : currentLocation.theme.background;
+
   return (
     <div className="min-h-screen relative" style={locationStyles}>
       <div
         className="game-background"
-        style={{ background: currentLocation.theme.background }}
+        style={{ background: bgStyle }}
       />
 
-      <Particles particle={currentLocation.theme.particle} />
+      <Particles particle={phase === 'awakening' ? '💀' : currentLocation.theme.particle} />
+
+      {/* 저장/불러오기 메뉴 */}
+      <SaveLoadMenu />
 
       {gameStatus === 'ended' && <EndingScreen />}
 
       <div className="relative z-10 min-h-screen flex flex-col items-center p-4 md:p-8">
         <div className="w-full max-w-lg">
           <header className="text-center mb-6">
-            <h1 className="game-title text-3xl md:text-4xl mb-2">
+            <h1 className={`game-title text-3xl md:text-4xl mb-2 ${phase === 'awakening' ? 'text-red-500' : ''}`}>
               THE AWAKENING
             </h1>
-            <p className="text-sm text-gray-400">
+            <p className={`text-sm ${phase === 'awakening' ? 'text-red-400' : 'text-gray-400'}`}>
               {getModeText()}
             </p>
           </header>
@@ -65,7 +74,9 @@ function App() {
           {phase === 'combat' && combatState && <CombatPanel />}
           {phase === 'shop' && <ShopWindow />}
 
-          {(phase === 'exploration' || phase === 'awakening') && (
+          {phase === 'awakening' && <AwakeningPanel />}
+
+          {phase === 'exploration' && (
             <ActionGrid location={currentLocation} />
           )}
         </div>
